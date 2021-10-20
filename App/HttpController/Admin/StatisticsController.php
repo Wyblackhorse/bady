@@ -15,17 +15,17 @@ class StatisticsController extends AdminBase
     # 获取 用户今日数据
     function get_statistics()
     {
-
         $date = $this->request()->getQueryParam('date');
-        if (!$this->check_parameter($date, "用户名") || !$this->check_parameter($date, "密码")) {
-            return false;
-        }
+        $kinds = $this->request()->getQueryParam('kinds');
+
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($date) {
-                $res = StatisticsModel::invoke($client)->all(['kinds' => 1, 'date' => $date]);
+            DbManager::getInstance()->invoke(function ($client) use ($date, $kinds) {
+                if ($date) {
+                    $res = StatisticsModel::invoke($client)->all(['kinds' => $kinds, 'date' => $date]);
+                } else {
+                    $res = StatisticsModel::invoke($client)->all(['kinds' => $kinds]);
+                }
                 $this->writeJson(200, $res, "获取成功");
-
-
             });
         } catch (\Throwable $e) {
             $this->writeJson(-1, [], "get_statistics异常:" . $e->getMessage());
@@ -38,7 +38,6 @@ class StatisticsController extends AdminBase
     #获取一共
     function get_statistics_admin()
     {
-
         $date = $this->request()->getQueryParam('date');
         if (!$this->check_parameter($date, "用户名") || !$this->check_parameter($date, "密码")) {
             return false;

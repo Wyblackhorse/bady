@@ -43,7 +43,7 @@ class Router extends AbstractRouter
          * StatisticsController
          */
 
-        $routeCollector->get('/admin/addBaby', '/Admin/BabyInformationController/addBaby');
+        $routeCollector->get('/admin/get_statistics', '/Admin/StatisticsController/get_statistics');
 
 
         /**
@@ -51,10 +51,12 @@ class Router extends AbstractRouter
          */
         $routeCollector->get('/user/login', '/User/UserController/login');
 
-
         #addTodayTotal
-        $routeCollector->get('/user/addTodayTotal', '/Admin/BabyInformationController/addTodayTotal');
-
+        $routeCollector->get('/user/addTodayTotal', '/User/StatisticsController/addTodayTotal');
+        #memberInformation
+        $routeCollector->get('/user/addAccount', '/User/AccountNumberController/addAccount');
+        $routeCollector->get('/user/addBaby', '/User/BabyInformationController/addBaby');
+        $routeCollector->get('/user/get_statistics', '/User/StatisticsController/get_statistics');
 
 
         /*

@@ -52,10 +52,10 @@ class UserController extends AdminBase
         $remark = $this->request()->getQueryParam("remark");
 
 
-        if (!$this->check_parameter($username, "用户名") || !$this->check_parameter($password, "密码") || !$this->check_parameter($action, "方法")
-            || !$this->check_parameter($remark, "备注")) {
-            return false;
-        }
+        /*        if (!$this->check_parameter($username, "用户名") || !$this->check_parameter($password, "密码") || !$this->check_parameter($action, "方法")
+                    || !$this->check_parameter($remark, "备注")) {
+                    return false;
+                }*/
         try {
             DbManager::getInstance()->invoke(function ($client) use ($username, $password, $action, $remark) {
                 if ($action == "add") {
@@ -86,8 +86,19 @@ class UserController extends AdminBase
                 }
 
                 if ($action == "select") {
-                    $one = UserModel::invoke($client)->all(['status' => 1]);
-                    $this->writeJson(200, [], "获取成功");
+                    $page = $this->request()->getQueryParam('page');
+                    $limit = $this->request()->getQueryParam("limit");
+                    $model = UserModel::create()->limit($limit * ($page - 1), $limit)->withTotalCount();
+                    $list = $model->all(['status' => 1, "kinds" => 2]);
+                    $result = $model->lastQueryResult();
+                    $total = $result->getTotalCount();
+                    $return_data = [
+                        "code" => 0,
+                        "msg" => '',
+                        'count' => $total,
+                        'data' => $list
+                    ];
+                    $this->response()->write(json_encode($return_data));
                     return true;
                 }
 

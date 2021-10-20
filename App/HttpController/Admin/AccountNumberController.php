@@ -7,6 +7,7 @@ namespace App\HttpController\Admin;
 use App\Model\AccountNumberModel;
 use App\Model\UserModel;
 use EasySwoole\ORM\DbManager;
+use PHPUnit\Util\Xml\ValidationResult;
 
 class AccountNumberController extends AdminBase
 {
@@ -23,10 +24,10 @@ class AccountNumberController extends AdminBase
         $user_id = $this->request()->getQueryParam('user_id');
         $action = $this->request()->getQueryParam('action');
 
-        if (!$this->check_parameter($address, "address") || !$this->check_parameter($mail, "mail") || !$this->check_parameter($remark, "remark")
-            || !$this->check_parameter($user_id, "user_id") || !$this->check_parameter($action, "action")) {
-            return false;
-        }
+//        if (!$this->check_parameter($address, "address") || !$this->check_parameter($mail, "mail") || !$this->check_parameter($remark, "remark")
+//            || !$this->check_parameter($user_id, "user_id") || !$this->check_parameter($action, "action")) {
+//            return false;
+//        }
         try {
             DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id) {
                 if ($action == "add") {
@@ -36,6 +37,14 @@ class AccountNumberController extends AdminBase
                         $this->writeJson(-101, [], "改用户不存在,非法添加");
                         return false;
                     }
+
+
+                    $three = AccountNumberModel::invoke($client)->get(['remark'=>$remark,'user_id'=>$user_id]);
+                    if ($three) {
+                        $this->writeJson(-101, [], "备注不可以重复");
+                        return false;
+                    }
+
                     $add = [
                         'updated_at' => time(),
                         'created_at' => time(),
@@ -55,15 +64,35 @@ class AccountNumberController extends AdminBase
                 }
 
                 if ($action == "select") {
-                    $one = AccountNumberModel::invoke($client)->all(['status' => 1]);
-                    foreach ($one as $k => $item) {
+
+
+                    $page = $this->request()->getQueryParam('page');
+                    $limit = $this->request()->getQueryParam("limit");
+                    $user_id = $this->request()->getQueryParam('user_id');
+
+                    $model = AccountNumberModel::create()->limit($limit * ($page - 1), $limit)->withTotalCount();
+                    if (isset($user_id)) {
+                        $model = $model->where(['user_id' => $user_id]);
+                    }
+                    $list = $model->all(['status' => 1]);
+                    foreach ($list as $k => $item) {
                         $res = UserModel::invoke($client)->get(['id' => $item['user_id']]);
                         if ($res) {
-                            $one[$k]['name'] = $res['remark'];
+                            $list[$k]['name'] = $res['remark'];
                         }
                     }
-                    $this->writeJson(200, [], "获取成功");
+
+                    $result = $model->lastQueryResult();
+                    $total = $result->getTotalCount();
+                    $return_data = [
+                        "code" => 0,
+                        "msg" => '',
+                        'count' => $total,
+                        'data' => $list
+                    ];
+                    $this->response()->write(json_encode($return_data));
                     return true;
+
                 }
 
 
@@ -105,6 +134,7 @@ class AccountNumberController extends AdminBase
                 }
             });
         } catch (\Throwable $e) {
+            var_dump($e->getMessage());
             $this->writeJson(-1, [], "addAccount 异常:" . $e->getMessage());
             return false;
         }

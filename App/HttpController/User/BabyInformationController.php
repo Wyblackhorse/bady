@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\HttpController\Admin;
+namespace App\HttpController\User;
 
 
 use App\Model\AccountNumberModel;
@@ -9,7 +9,8 @@ use App\Model\BabyInformationModel;
 use App\Model\UserModel;
 use EasySwoole\ORM\DbManager;
 
-class BabyInformationController extends UserController
+
+class BabyInformationController extends UserBase
 {
 
 
@@ -24,13 +25,9 @@ class BabyInformationController extends UserController
         $remark = $this->request()->getQueryParam('remark');
         $account_number_id = $this->request()->getQueryParam('account_number_id');
         $action = $this->request()->getQueryParam('action');
-        $user_id = $this->request()->getQueryParam('user_id');
-//        if (!$this->check_parameter($baby_id, "baby_id") || !$this->check_parameter($price, "price") || !$this->check_parameter($remark, "remark")
-//            || !$this->check_parameter($account_number_id, "account_number_id") || !$this->check_parameter($action, "action")) {
-//            return false;
-//        }
+
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($baby_id, $price, $remark, $action, $account_number_id, $user_id) {
+            DbManager::getInstance()->invoke(function ($client) use ($baby_id, $price, $remark, $action, $account_number_id) {
                 if ($action == "add") {
                     #添加
                     $one = AccountNumberModel::invoke($client)->get(['id' => $account_number_id]);
@@ -45,8 +42,7 @@ class BabyInformationController extends UserController
                         'baby_id' => $baby_id,
                         'account_number_id' => $account_number_id,
                         'remark' => $remark,
-                        'status' => 1,
-                        'user_id' => $user_id
+                        'status' => 1
                     ];
                     $two = BabyInformationModel::invoke($client)->data($add)->save();
                     if (!$two) {
@@ -66,12 +62,7 @@ class BabyInformationController extends UserController
                     if ($account_number_id) {
                         $model = $model->where(['account_number_id' => $account_number_id]);
                     }
-
-                    if ($user_id) {
-                        $model = $model->where(['user_id' => $user_id]);
-                    }
-
-                    $list = $model->all(['status' => 1]);
+                    $list = $model->all(['status' => 1,'user_id'=>$this->who['id']]);
                     foreach ($list as $k => $item) {
                         $res = AccountNumberModel::invoke($client)->get(['id' => $item['account_number_id']]);
                         if ($res) {
