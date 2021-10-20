@@ -1,17 +1,17 @@
 <?php
 
-namespace App\HttpController\Admin;
+namespace App\HttpController\User;
 
 use App\Model\UserModel;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\ORM\DbManager;
 
-class AdminBase extends Controller
+class UserBase extends Controller
 {
 
 
     protected $who;
-    protected $white_router = array('/admin/login');
+    protected $white_router = array('/user/login');
 
     protected function onRequest(?string $action): ?bool
     {
