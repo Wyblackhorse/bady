@@ -23,9 +23,11 @@ class AccountNumberController extends UserBase
         $remark = $this->request()->getQueryParam('remark');
         $user_id = $this->who['id'];
         $action = $this->request()->getQueryParam('action');
+        $power_up = $this->request()->getQueryParam('power_up');
+
 
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id) {
+            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id,$power_up) {
                 if ($action == "add") {
                     #添加
                     $one = UserModel::invoke($client)->get(['id' => $user_id]);
@@ -41,6 +43,9 @@ class AccountNumberController extends UserBase
                         return false;
                     }
 
+                    if (!isset($power_up)) {
+                        $power_up = 0;
+                    }
                     $add = [
                         'updated_at' => time(),
                         'created_at' => time(),
@@ -48,7 +53,8 @@ class AccountNumberController extends UserBase
                         'mail' => $mail,
                         'user_id' => $user_id,
                         'remark' => $remark,
-                        'status' => 1
+                        'status' => 1,
+                        'power_up' => $power_up
                     ];
                     $two = AccountNumberModel::invoke($client)->data($add)->save();
                     if (!$two) {

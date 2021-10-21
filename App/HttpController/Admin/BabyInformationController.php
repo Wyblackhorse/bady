@@ -75,7 +75,8 @@ class BabyInformationController extends UserController
                     foreach ($list as $k => $item) {
                         $res = AccountNumberModel::invoke($client)->get(['id' => $item['account_number_id']]);
                         if ($res) {
-                            $list[$k]['name'] = $res['remark'];
+                            $list[$k]['name'] = $res['mail'];
+                            $list[$k]['phone'] = $res['remark'];
                         }
                     }
 

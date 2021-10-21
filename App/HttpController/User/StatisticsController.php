@@ -71,6 +71,7 @@ class StatisticsController extends UserBase
                 $today_bottle = $this->request()->getQueryParam('today_bottle');
                 $date = $this->request()->getQueryParam('date');
                 $action = $this->request()->getQueryParam('action');
+                $subsection = $this->request()->getQueryParam('subsection');
                 if ($action == "add") {
                     $one = AccountNumberModel::invoke($client)->get(['id' => $account_number_id]);
                     if (!$one) {
@@ -81,8 +82,10 @@ class StatisticsController extends UserBase
                     $two = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", time() - 86400)]);
                     if ($two) {
                         $compare = $today_bottle - $two['today_bottle'];
+                        $subsection_yes = $subsection - $two['subsection'];
                     } else {
                         $compare = $today_bottle;
+                        $subsection_yes = $subsection;
                     }
                     $add = [
                         'account_number_id' => $account_number_id,
@@ -95,7 +98,11 @@ class StatisticsController extends UserBase
                         'created_at' => time(),
                         'updated_at' => time(),
                         'compare' => $compare,
-                        'user_id' => $this->who['id']];
+                        'user_id' => $this->who['id'],
+                        'subsection' => $subsection,
+                        'subsection_yes' => $subsection_yes
+                    ];
+
 
                     $pp = StatisticsModel::invoke($client)->get(['date' => $date, 'account_number_id' => $account_number_id]);
                     if ($pp) {
@@ -129,7 +136,6 @@ class StatisticsController extends UserBase
                         }
 
                         $win_rate = ($zz['today_victory'] + $add['today_victory']) / ($zz['today_victory'] + $add['today_victory'] + $zz['today_fail'] + $add['today_fail']);
-                        var_dump($win_rate);
                         StatisticsModel::invoke($client)->where(['id' => $zz['id']])->update(
                             [
                                 'today_victory' => QueryBuilder::inc($add['today_victory']),
@@ -140,8 +146,33 @@ class StatisticsController extends UserBase
                                 'win_rate' => $win_rate
                             ]
                         );
+                    }
 
 
+                    $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 3, "user_id" => $this->who['id']]);
+                    if (!$zz) {
+                        $add['kinds'] = 3;
+                        $add['account_number_id'] = 0;
+                        $add['user_id'] = -1;
+                        $res = StatisticsModel::invoke($client)->data($add)->save();
+                    } else {
+                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", time() - 86400), 'kinds' => 2]);
+                        if ($ll) {
+                            $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
+                        } else {
+                            $compare = $zz['today_bottle'] + $add['today_bottle'];
+                        }
+                        $win_rate = ($zz['today_victory'] + $add['today_victory']) / ($zz['today_victory'] + $add['today_victory'] + $zz['today_fail'] + $add['today_fail']);
+                        StatisticsModel::invoke($client)->where(['id' => $zz['id']])->update(
+                            [
+                                'today_victory' => QueryBuilder::inc($add['today_victory']),
+                                'today_fail' => QueryBuilder::inc($add['today_fail']),
+                                'today_bottle' => QueryBuilder::inc($add['today_bottle']),
+                                'updated_at' => time(),
+                                'compare' => $compare,
+                                'win_rate' => $win_rate
+                            ]
+                        );
                     }
 
 

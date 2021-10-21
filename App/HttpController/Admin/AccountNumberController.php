@@ -23,13 +23,14 @@ class AccountNumberController extends AdminBase
         $remark = $this->request()->getQueryParam('remark');
         $user_id = $this->request()->getQueryParam('user_id');
         $action = $this->request()->getQueryParam('action');
+        $power_up = $this->request()->getQueryParam('power_up');
 
 //        if (!$this->check_parameter($address, "address") || !$this->check_parameter($mail, "mail") || !$this->check_parameter($remark, "remark")
 //            || !$this->check_parameter($user_id, "user_id") || !$this->check_parameter($action, "action")) {
 //            return false;
 //        }
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id) {
+            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id,$power_up) {
                 if ($action == "add") {
                     #添加
                     $one = UserModel::invoke($client)->get(['id' => $user_id]);
@@ -39,10 +40,14 @@ class AccountNumberController extends AdminBase
                     }
 
 
-                    $three = AccountNumberModel::invoke($client)->get(['remark'=>$remark,'user_id'=>$user_id]);
+                    $three = AccountNumberModel::invoke($client)->get(['remark' => $remark, 'user_id' => $user_id]);
                     if ($three) {
                         $this->writeJson(-101, [], "备注不可以重复");
                         return false;
+                    }
+
+                    if (!isset($power_up)) {
+                        $power_up = 0;
                     }
 
                     $add = [
@@ -52,7 +57,8 @@ class AccountNumberController extends AdminBase
                         'mail' => $mail,
                         'user_id' => $user_id,
                         'remark' => $remark,
-                        'status' => 1
+                        'status' => 1,
+                        'power_up' => $power_up
                     ];
                     $two = AccountNumberModel::invoke($client)->data($add)->save();
                     if (!$two) {
