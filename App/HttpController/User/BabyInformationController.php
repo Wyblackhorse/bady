@@ -42,7 +42,8 @@ class BabyInformationController extends UserBase
                         'baby_id' => $baby_id,
                         'account_number_id' => $account_number_id,
                         'remark' => $remark,
-                        'status' => 1
+                        'status' => 1,
+                        'user_id'=>$this->who['id']
                     ];
                     $two = BabyInformationModel::invoke($client)->data($add)->save();
                     if (!$two) {
@@ -63,10 +64,13 @@ class BabyInformationController extends UserBase
                         $model = $model->where(['account_number_id' => $account_number_id]);
                     }
                     $list = $model->all(['status' => 1,'user_id'=>$this->who['id']]);
+
+
                     foreach ($list as $k => $item) {
                         $res = AccountNumberModel::invoke($client)->get(['id' => $item['account_number_id']]);
                         if ($res) {
-                            $list[$k]['name'] = $res['remark'];
+                            $list[$k]['name'] = $res['mail'];
+                            $list[$k]['phone'] = $res['remark'];
                         }
                     }
 

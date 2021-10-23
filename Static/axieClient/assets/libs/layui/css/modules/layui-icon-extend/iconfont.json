@@ -1,0 +1,317 @@
+{
+  "id": "2881749",
+  "name": "统计",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "712232",
+      "name": "人员账号",
+      "font_class": "icon-account",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "727344",
+      "name": "切换账号",
+      "font_class": "qiehuanzhanghao",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "744665",
+      "name": "用户管理02",
+      "font_class": "yonghuguanli",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
+    },
+    {
+      "icon_id": "1079461",
+      "name": "宠物",
+      "font_class": "chongwu",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "1313809",
+      "name": "宠物",
+      "font_class": "chongwu1",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "1320054",
+      "name": "用户管理",
+      "font_class": "yonghuguanli1",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "1619257",
+      "name": "宠物",
+      "font_class": "icon-test",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "2378421",
+      "name": "控制台",
+      "font_class": "kongzhitai",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "3782934",
+      "name": "用户管理",
+      "font_class": "yonghuguanli2",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "3979414",
+      "name": "宠物",
+      "font_class": "chongwu2",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "4320359",
+      "name": "用户管理",
+      "font_class": "yonghuguanli3",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "4329914",
+      "name": "用户管理",
+      "font_class": "yonghuguanli4",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "4397720",
+      "name": "控制台",
+      "font_class": "kongzhitai1",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "4398156",
+      "name": "用户管理",
+      "font_class": "yonghuguanli5",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "4419024",
+      "name": "控制台",
+      "font_class": "kongzhitai_",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "4762920",
+      "name": "携带宠物",
+      "font_class": "xiedaichongwu",
+      "unicode": "e90d",
+      "unicode_decimal": 59661
+    },
+    {
+      "icon_id": "5131676",
+      "name": "宠物玩具",
+      "font_class": "chongwuwanju",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "5220533",
+      "name": "宠物猫咪",
+      "font_class": "chongwumaomi",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "5434090",
+      "name": "用户管理",
+      "font_class": "yonghuguanli6",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "5469606",
+      "name": "宠物狗",
+      "font_class": "chongwugou",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "6234367",
+      "name": "我的账号",
+      "font_class": "wodezhanghao",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "6512222",
+      "name": "用户管理",
+      "font_class": "yonghuguanli7",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "6900161",
+      "name": "综合控制台",
+      "font_class": "zonghekongzhitai",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "6900226",
+      "name": "报表控制台",
+      "font_class": "baobiaokongzhitai",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "7515704",
+      "name": "账号管理",
+      "font_class": "zhanghaoguanli",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "7817237",
+      "name": "账号安全",
+      "font_class": "zhanghaoanquan",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "7831445",
+      "name": "控制台",
+      "font_class": "kongzhitai2",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "8159852",
+      "name": "账号管理",
+      "font_class": "zhanghaoguanli1",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "8634405",
+      "name": "用户管理",
+      "font_class": "yonghuguanli8",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "8729900",
+      "name": "用户管理",
+      "font_class": "yonghuguanli9",
+      "unicode": "e6ab",
+      "unicode_decimal": 59051
+    },
+    {
+      "icon_id": "9441402",
+      "name": "基础数据-资产账号",
+      "font_class": "jichushuju-zichanzhanghaocopy",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "9495515",
+      "name": "控制台",
+      "font_class": "kongzhitai3",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "9697597",
+      "name": "控制台",
+      "font_class": "icon_xinyong_xianxing_jijin-",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "12163495",
+      "name": "用户管理",
+      "font_class": "yonghuguanli10",
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
+      "icon_id": "12382570",
+      "name": "yonghuguanli",
+      "font_class": "yonghuguanli11",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "12433029",
+      "name": "设置控制台",
+      "font_class": "shezhikongzhitai",
+      "unicode": "e6c9",
+      "unicode_decimal": 59081
+    },
+    {
+      "icon_id": "12433031",
+      "name": "数据控制台",
+      "font_class": "shujukongzhitai",
+      "unicode": "e6ca",
+      "unicode_decimal": 59082
+    },
+    {
+      "icon_id": "12694066",
+      "name": "用户管理",
+      "font_class": "yonghuguanli12",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "12975229",
+      "name": "控制台",
+      "font_class": "kongzhitai4",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "14095302",
+      "name": "控制台",
+      "font_class": "kongzhitai5",
+      "unicode": "e78b",
+      "unicode_decimal": 59275
+    },
+    {
+      "icon_id": "14160910",
+      "name": "控制台",
+      "font_class": "kongzhitai6",
+      "unicode": "e74d",
+      "unicode_decimal": 59213
+    },
+    {
+      "icon_id": "16365909",
+      "name": "账号中心 账号管理",
+      "font_class": "zhanghaozhongxinzhanghaoguanli",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "20266184",
+      "name": "宠物",
+      "font_class": "chongwu3",
+      "unicode": "e6d7",
+      "unicode_decimal": 59095
+    },
+    {
+      "icon_id": "24848550",
+      "name": "网点账号",
+      "font_class": "wangdianzhanghao",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    }
+  ]
+}

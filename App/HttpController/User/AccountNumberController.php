@@ -22,6 +22,9 @@ class AccountNumberController extends UserBase
         $mail = $this->request()->getQueryParam('mail');
         $remark = $this->request()->getQueryParam('remark');
         $user_id = $this->who['id'];
+
+
+
         $action = $this->request()->getQueryParam('action');
         $power_up = $this->request()->getQueryParam('power_up');
 
@@ -56,6 +59,7 @@ class AccountNumberController extends UserBase
                         'status' => 1,
                         'power_up' => $power_up
                     ];
+
                     $two = AccountNumberModel::invoke($client)->data($add)->save();
                     if (!$two) {
                         $this->writeJson(-101, [], "添加失败");
@@ -69,6 +73,7 @@ class AccountNumberController extends UserBase
                     $page = $this->request()->getQueryParam('page');
                     $limit = $this->request()->getQueryParam("limit");
                     $user_id = $this->who['id'];
+//                    var_dump($user_id);
                     $model = AccountNumberModel::create()->limit($limit * ($page - 1), $limit)->withTotalCount();
                     if (isset($user_id)) {
                         $model = $model->where(['user_id' => $user_id]);
@@ -99,7 +104,7 @@ class AccountNumberController extends UserBase
                     if (!$this->check_parameter($id, "id")) {
                         return false;
                     }
-                    $one = AccountNumberModel::invoke($client)->where(['id' => $id])->update(['status' => 2, 'updated_at' => time()]);
+                    $one = AccountNumberModel::invoke($client)->destroy(['id' => $id]);
                     if (!$one) {
                         $this->writeJson(-101, [], "删除失败");
                         return false;

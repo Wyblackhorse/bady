@@ -29,12 +29,21 @@ class StatisticsController extends UserBase
                 $page = $this->request()->getQueryParam('page');
                 $limit = $this->request()->getQueryParam("limit");
                 $date = $this->request()->getQueryParam('date');
+                $account_number_id = $this->request()->getQueryParam('account_number_id');
+
                 $model = StatisticsModel::create()->limit($limit * ($page - 1), $limit)->withTotalCount();
+
+                if (isset($account_number_id)) {
+                    $model = $model->where(['account_number_id' => $account_number_id]);
+                }
+
                 if (isset($date)) {
                     $list = $model->all(['kinds' => 1, 'date' => $date, 'user_id' => $this->who['id']]);
                 } else {
-                    $list = $model->all(['kinds' => 1]);
+                    $list = $model->all(['kinds' => 1, 'user_id' => $this->who['id']]);
                 }
+
+
                 foreach ($list as $k => $item) {
                     $res = AccountNumberModel::invoke($client)->get(['id' => $item['account_number_id']]);
                     if ($res) {
@@ -72,6 +81,8 @@ class StatisticsController extends UserBase
                 $date = $this->request()->getQueryParam('date');
                 $action = $this->request()->getQueryParam('action');
                 $subsection = $this->request()->getQueryParam('subsection');
+                $ppp = strtotime(date($date));
+
                 if ($action == "add") {
                     $one = AccountNumberModel::invoke($client)->get(['id' => $account_number_id]);
                     if (!$one) {
@@ -79,8 +90,12 @@ class StatisticsController extends UserBase
                         return false;
                     }
                     $win_rate = $today_victory / ($today_victory + $today_fail);
-                    $two = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", time() - 86400)]);
+                    #查看 昨天是否存在数据
+                    $two = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp - 86400)]);
+
+
                     if ($two) {
+                        # 存在  昨天的数据需要更新    用更新的瓶子数-昨日的瓶子数
                         $compare = $today_bottle - $two['today_bottle'];
                         $subsection_yes = $subsection - $two['subsection'];
                     } else {
@@ -120,6 +135,7 @@ class StatisticsController extends UserBase
                         }
                         $this->writeJson(200, [], "添加成功");
                     }
+
                     #查询kinds =2 是否存在
                     $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 2]);
                     if (!$zz) {
@@ -128,7 +144,7 @@ class StatisticsController extends UserBase
                         $res = StatisticsModel::invoke($client)->data($add)->save();
                     } else {
 
-                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", time() - 86400), 'kinds' => 2]);
+                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 2]);
                         if ($ll) {
                             $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
                         } else {
@@ -153,10 +169,10 @@ class StatisticsController extends UserBase
                     if (!$zz) {
                         $add['kinds'] = 3;
                         $add['account_number_id'] = 0;
-                        $add['user_id'] = -1;
+                        $add['user_id'] = $this->who['id'];
                         $res = StatisticsModel::invoke($client)->data($add)->save();
                     } else {
-                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", time() - 86400), 'kinds' => 2]);
+                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 2]);
                         if ($ll) {
                             $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
                         } else {
@@ -175,11 +191,35 @@ class StatisticsController extends UserBase
                         );
                     }
 
+                    #查看 明天是否存在
+                    $three = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp + 86400)]);
+                    if ($three) {
+                        $compare = $three['today_bottle'] - $add['today_bottle']; #修改明天的数据
+                        StatisticsModel::invoke($client)->where(['id' => $three['id']])->update([
+                            'compare' => $compare
+                        ]);
+                        #修改明天的是 个人总统计
+                        $one = StatisticsModel::invoke($client)->get(['kinds' => 3, "date" => Date("Y-m-d", $ppp + 86400), 'user_id' => $this->who['id']]);
+                        if ($one) {
+                            $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 3, "user_id" => $this->who['id']]);
+                            if ($zz) {
+                                $compare = $one['today_bottle'] - $zz['today_bottle'];
+                                StatisticsModel::invoke($client)->where(['id' => $one['id']])->update(['compare' => $compare]);
+                            }
+                        }
+                        #修改 明天的 总统计
+                        $one = StatisticsModel::invoke($client)->get(['kinds' => 2, "date" => Date("Y-m-d", $ppp + 86400)]);
+                        if ($one) {
+                            $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 2]);
+                            if ($zz) {
+                                $compare = $one['today_bottle'] - $zz['today_bottle'];
+                                StatisticsModel::invoke($client)->where(['id' => $one['id']])->update(['compare' => $compare]);
+                            }
+                        }
 
+                    }
                     return true;
                 }
-
-
             });
         } catch (\Throwable $e) {
             $this->writeJson(-1, [], "异常:" . $e->getMessage());

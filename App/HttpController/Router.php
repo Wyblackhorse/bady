@@ -44,6 +44,10 @@ class Router extends AbstractRouter
          */
 
         $routeCollector->get('/admin/get_statistics', '/Admin/StatisticsController/get_statistics');
+        #addStatistics
+        $routeCollector->get('/admin/addStatistics', '/Admin/StatisticsController/addStatistics');
+        #updateStatistics
+        $routeCollector->get('/admin/updateStatistics', '/Admin/StatisticsController/updateStatistics');
 
 
         /**

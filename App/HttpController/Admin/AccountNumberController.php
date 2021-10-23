@@ -30,7 +30,7 @@ class AccountNumberController extends AdminBase
 //            return false;
 //        }
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id,$power_up) {
+            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id, $power_up) {
                 if ($action == "add") {
                     #添加
                     $one = UserModel::invoke($client)->get(['id' => $user_id]);
@@ -107,7 +107,7 @@ class AccountNumberController extends AdminBase
                     if (!$this->check_parameter($id, "id")) {
                         return false;
                     }
-                    $one = AccountNumberModel::invoke($client)->where(['id' => $id])->update(['status' => 2, 'updated_at' => time()]);
+                    $one = AccountNumberModel::invoke($client)->destroy(['id' => $id]);
                     if (!$one) {
                         $this->writeJson(-101, [], "删除失败");
                         return false;
@@ -129,6 +129,7 @@ class AccountNumberController extends AdminBase
                         'mail' => $mail,
                         'user_id' => $user_id,
                         'remark' => $remark,
+                        'power_up' => $power_up
                     ];
                     $one = AccountNumberModel::invoke($client)->where(['id' => $id])->update($add);
                     if (!$one) {

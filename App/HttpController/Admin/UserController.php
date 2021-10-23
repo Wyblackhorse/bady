@@ -103,6 +103,8 @@ class UserController extends AdminBase
                 }
 
 
+
+
                 if ($action == "del") {
                     $id = $this->request()->getQueryParam('id');
                     if (!$this->check_parameter($id, "id")) {

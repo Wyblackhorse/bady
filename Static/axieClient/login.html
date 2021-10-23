@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>后台登录</title>
+		<link href="./assets/images/favicon.ico" rel="icon">
+		<link rel="stylesheet" type="text/css" href="./assets/libs/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="./assets/css/login.css" />
+	</head>
+
+	<body>
+		<div class="m-login-bg">
+			<div class="m-login">
+				<h3>axie后台登录</h3>
+				<div class="m-login-warp">
+					<form class="layui-form">
+						<div class="layui-form-item layui-input-icon-group">
+							<input type="text" name="username" id="username" required lay-verify="required" lay-verType="tips" placeholder="请输入登录账号" autocomplete="off" class="layui-input" style="height: 46px;">
+						</div>
+						<div class="layui-form-item layui-input-icon-group">
+							<input type="password" name="password"  id="password" required lay-verify="required" lay-verType="tips" placeholder="请输入登录密码" autocomplete="off" class="layui-input"  style="height: 46px;margin-top: 20px;">
+						</div>
+						<div class="layui-form-item m-login-btn">
+							<button class="layui-btn layui-btn-normal" lay-filter="loginSubmit" lay-submit style="width: 100%;height: 48px;line-height: 48px;margin-top: 15px;">登录</button>
+<!--							<div class="layui-inline">-->
+<!--								<button type="reset" class="layui-btn layui-btn-primary" >取消</button>-->
+<!--							</div>-->
+						</div>
+					</form>
+				</div>
+				<p class="copyright" style="margin-top: 10px;">copyright © 2021 axie all rights reserved.</p>
+			</div>
+		</div>
+		<script type="text/javascript" src="./assets/libs/layui/layui.js"></script>
+		<script type="text/javascript" src="./assets/js/common.js?v=318"></script>
+		<script type="text/javascript" src="./assets/js/config.url.js"></script>
+		<script>
+			layui.use(['layer', 'form' ,'notice'], function () {
+				var $ = layui.jquery;
+				var layer = layui.layer;
+				var form = layui.form;
+				var notice = layui.notice;
+
+				$('.login-wrapper').removeClass('layui-hide');
+
+				/* 表单提交 */
+				form.on('submit(loginSubmit)', function (obj) {
+					// console.log(obj.field);
+
+					// console.log(username,password);
+					//声明json格式的请求数据
+					// var requestdata = {"admin_name": username, "admin_password": password};
+
+					//模拟登录
+					// window.location.href = "../../index.html";
+					//
+
+					var username = $("#username").val();
+					var password = $("#password").val();
+					//声明json格式的请求数据
+					var requestdata = {"username": username, "password": password};
+
+					// JsSetCookie('tokenMyb',"tempToken");
+					// //模拟登录
+					// window.location.href = "index.html";
+
+					$.ajax({
+						url: global_request_login+"?username="+username+"&password="+password,
+						// data: requestdata,
+						type: "GET",
+						dataType: "json",
+						success: function (resultJson) {
+
+							if (200 === resultJson.code) {
+								// alert("登录成功!");
+
+								var millisecond = new Date().getTime();
+								var expiresTime = new Date(millisecond + 60 * 1000 * 60);
+
+								var tokenCK  = resultJson.result.token;
+								JsSetCookie('tokenMyb',tokenCK);
+								JsSetCookie('apikey',resultJson.result.API_KEY);
+								layer.msg(resultJson.msg, {icon: 1, time: 1500}, function () {
+									// location.replace('./index.html');
+
+									window.location.href = "index.html?user="+username;
+								});
+
+								// setTimeout(function (){
+								//
+								//
+								//     //var date = new Date();
+								//     //date.setTime(date.getTime()+10*1000);//只能这么写，10表示10秒钟
+								//
+								//     //jquery 设置cookies方法
+								//     //$.cookie('token',resultJson.result.token,{expires: expiresTime});
+								//
+								//     //js设置cookies方法
+								//
+								//     //document.cookie = resultJson.result.token;
+								//     //document.cookie=tokenCK;
+								//
+								//     // console.log(document.cookie);
+								//
+								//
+								//
+								// },2000)
+
+
+							}else{
+
+								layer.msg(resultJson.msg);
+								//alert(resultJson.code);
+
+							}
+
+
+						},
+
+
+					});
+
+
+
+					return false;
+				});
+
+
+				//设置CK方法
+				function JsSetCookie(name,value)//两个参数，一个是cookie名称，一个是值
+				{
+					var millisecond = new Date().getTime();
+					var expiresTime = new Date(millisecond + 60 * 1000 * 60 * 24 );
+					document.cookie = name + "="+ escape (value) + ";expires=" + expiresTime.toGMTString();
+				}
+
+
+
+			});
+		</script>
+	</body>
+
+</html>
