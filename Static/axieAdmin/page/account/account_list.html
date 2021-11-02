@@ -23,6 +23,29 @@
                 line-height: 46px;
             }
 
+            /*!* 偶数行背景色 *!*/
+            /*.layui-table[lay-even] tr:nth-child(even) {*/
+            /*    !* background-color: #aaffaa; *!*/
+            /*    background-color: #eeffee;*/
+            /*}*/
+
+            /*!* 鼠标指向表格时,奇数行背景颜色 *!*/
+            /*.layui-table tbody tr:hover,.layui-table-hover {*/
+            /*    background-color: #eeffee;*/
+            /*}*/
+
+            /*!* 表格头部工具栏背景色 *!*/
+            /*.layui-table-tool {*/
+            /*    background-color: #eeffee;*/
+            /*}*/
+
+            /*!* 表格头部背景色 *!*/
+            /*th {*/
+            /*    background-color: #359f6a; !* MediumSeaGreen *!*/
+            /*    color: #fff;*/
+            /*    font-weight: bold*/
+            /*}*/
+
     </style>
 
 
@@ -188,6 +211,7 @@
                 //     '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
                 //     '</p>'].join(''),
                 cellMinWidth: 100,
+                even:true,
                 page :  { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
                     layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                     //,curr: 5 //设定初始在第 5 页
@@ -196,17 +220,25 @@
                     ,last: "尾页"//不显示尾页
                 },
                 height : "full-100",
-                limit : 15,
-                limits : [15,30,50,100],
+                limit : 200,
+                limits : [15,30,50,100,200,500,1000],
                 // id : "systemLog",
                 cols: [[
                     {type: 'checkbox'},
-                    {field: 'id',title:'id',sort: true,align:"center",width:130},
+                    // {field: 'id',title:'id',sort: true,align:"center",width:130},
+                    {field: 'remark', title: '手机', width:110, sort: true,align:"center"},
                     {field: 'name', title: '员工',width:115, sort: true,align:"center"},
-                    {field: 'address', title: '地址',minWidth:410, sort: true,align:"center"},
-                    {field: 'mail', title: '邮箱',minWidth:220, sort: true,align:"center"},
-                    {field: 'power_up', title: '体力', width:100, sort: true,align:"center"},
-                    {field: 'remark', title: '备注', sort: true,align:"center"},
+                    {field: 'address', title: '地址',width:170,sort: true,align:"center", templet: function (d) {
+                        return d.address.substring(d.address.length-4)
+                    }},
+                    // {field: 'mail', title: '邮箱',minWidth:220, sort: true,align:"center"},
+                    // {field: 'axie_content', title: '宠物', sort: true,align:"center"},
+                    // {field: 'all_price', title: '总价', sort: true,align:"center"},
+                    {field: 'operator', title: '阵容', sort: true,align:"center"},
+                    // {field: 'power_up', title: '体力', width:100, sort: true,align:"center"},
+                    // {field: 'price', title: '总价', width:100, sort: true,align:"center"},
+
+
 
                     // {field: 'status', title: '状态', sort: true,align:"center",width:130,templet:function(d){
                     //
@@ -250,7 +282,7 @@
                     {title: '操作', width:180, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]],
                 done: function (res, curr, count) {
-                    $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    // $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
                 }
             });
 

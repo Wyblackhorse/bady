@@ -62,17 +62,17 @@
 <!--                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit >-->
 <!--                            <i class="layui-icon">&#xe615;</i>搜索-->
 <!--                        </button>-->
-<!--                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit>-->
-<!--                            <i class="layui-icon layui-icon-add-1"></i>添加统计-->
-<!--                        </button>-->
+                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit>
+                            <i class="layui-icon layui-icon-add-1"></i>添加统计
+                        </button>
                         <button class="layui-btn icon-btn currReloadBtn" lay-filter="reloadData" lay-submit style="background-color: #926dde;border-color: #926dde;">
                             <i class="layui-icon layui-icon-refresh"></i>刷新数据
                         </button>
                     </div>
                     <div class="layui-inline" style="color: red">&emsp;
-                        <span style="font-weight: bold">今日总胜场:</span> <span style="color: red;font-weight: bold" id="total_today_victory">0</span>
-                        <span style="font-weight: bold;margin-left: 10px">今日总败场:</span> <span style="color: red;font-weight: bold" id="total_today_fail">0</span>
-                        <span style="font-weight: bold;margin-left: 10px">总胜率:</span> <span style="color: red;font-weight: bold" id="total_win_rate">0%</span>
+<!--                        <span style="font-weight: bold">今日总胜场:</span> <span style="color: red;font-weight: bold" id="total_today_victory">0</span>-->
+<!--                        <span style="font-weight: bold;margin-left: 10px">今日总败场:</span> <span style="color: red;font-weight: bold" id="total_today_fail">0</span>-->
+<!--                        <span style="font-weight: bold;margin-left: 10px">总胜率:</span> <span style="color: red;font-weight: bold" id="total_win_rate">0%</span>-->
                         <span style="font-weight: bold;margin-left: 10px">总瓶子数:</span> <span style="color: red;font-weight: bold" id="total_today_bottle">0</span>
                         <span style="font-weight: bold;margin-left: 10px">与昨日相比:</span> <span style="color: red;font-weight: bold" id="total_compare">0</span>
                     </div>
@@ -169,7 +169,7 @@
             })
 
 
-            //获取用户列表添加到下拉框中
+            //获取今日总数添加到下拉框中
             $.ajax({
                 url: global_request_get_statistics+"?token="+global_token+"&action=select&date="+currData+"&kinds=2",
                 dataType: 'json',
@@ -255,26 +255,28 @@
                     {field: 'user_name', title: '员工', sort: true,align:"center"},
                     {field: 'name', title: 'axie账号', sort: true,align:"center"},
                     {field: 'subsection', title: '分段', sort: true,align:"center"},
-                    {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
-                    {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
-                    {field: 'today_bottle', title: '今日盈利', sort: true,align:"center", templet: function (d) {
+                    {field: 'subsection_yes', title: '昨日分段', sort: true,align:"center"},
+                    // {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
+                    // {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
+                    {field: 'today_bottle', title: '今日瓶子总数', sort: true,align:"center"},
+                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
+                    {field: 'compare', title: '今日获取瓶子总数', sort: true,align:"center", templet: function (d) {
 
-                            if(parseFloat(d.today_bottle)>0){
-                                return "+"+d.today_bottle;
+                            if(parseFloat(d.compare)>0){
+                                return "+"+d.compare;
                             }else{
-                                return "-"+d.today_bottle;
+                                // return "-"+d.compare;
+                                return d.compare;
                             }
 
                     }},
-                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
-                    {field: 'compare', title: '与昨日比较', sort: true,align:"center"},
-                    {field: 'win_rate', title: '胜率', sort: true,align:"center",totalRow: true, templet: function (d) {
-
-                        var str=Number(d.win_rate*100).toFixed(1);
-                        str+="%";
-                        return str;
-
-                    }},
+                    // {field: 'win_rate', title: '胜率', sort: true,align:"center",totalRow: true, templet: function (d) {
+                    //
+                    //     var str=Number(d.win_rate*100).toFixed(1);
+                    //     str+="%";
+                    //     return str;
+                    //
+                    // }},
                     {field: 'date', title: '日期',width:120, sort: true,align:"center"},
 
 
@@ -294,36 +296,76 @@
                 ]],
                 done: function (res, curr, count) {
                     $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    merge(res);
                 }
             });
 
-            // // 添加账号的点击事件
-            // form.on('submit(userTbSearch)', function (data) {
-            //
-            //     var index = layui.layer.open({
-            //         area: ['520px', '465px'],
-            //         fixed: false, //不固定
-            //         maxmin: false,
-            //         title : "添加今日统计",
-            //         skin: 'layui-layer-rim',//加上边框
-            //         type : 2,
-            //         content : "statistics_add.html",
-            //         success : function(layero, index){
-            //             var body = layui.layer.getChildFrame('body', index);
-            //
-            //         },
-            //         end : function() {//弹窗关闭后的回调函数
-            //             //利用laypage实现局部刷新,以下两种方式都可以
-            //             // $(".layui-laypage-btn").click()
-            //             //直接刷新当前修改的行
-            //             // $(".layui-laypage-btn")[0].click()
-            //
-            //             // window.parent.location.reload();
-            //             // window.location.reload();
-            //         }
-            //     })
-            //     return false;
-            // });
+
+            //合并单元格函数方法
+            function merge(res) {
+
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                // var columsName = ['id','name'];//需要合并的列名称
+                // var columsIndex = [0,1];//需要合并的列索引值
+                var columsName = ['user_name','date'];//需要合并的列名称
+                var columsIndex = [2,7];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        }else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
+
+
+
+            // 添加账号的点击事件
+            form.on('submit(userTbSearch)', function (data) {
+
+                var index = layui.layer.open({
+                    area: ['520px', '410px'],
+                    // area: ['520px', '557px'],
+                    fixed: false, //不固定
+                    maxmin: false,
+                    title : "添加今日统计",
+                    skin: 'layui-layer-rim',//加上边框
+                    type : 2,
+                    content : "statistics_add.html",
+                    success : function(layero, index){
+                        var body = layui.layer.getChildFrame('body', index);
+
+                    },
+                    end : function() {//弹窗关闭后的回调函数
+                        //利用laypage实现局部刷新,以下两种方式都可以
+                        // $(".layui-laypage-btn").click()
+                        //直接刷新当前修改的行
+                        // $(".layui-laypage-btn")[0].click()
+
+                        // window.parent.location.reload();
+                        // window.location.reload();
+                    }
+                })
+                return false;
+            });
 
 
             /* 下拉框选中事件 */
@@ -356,6 +398,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
 
@@ -438,6 +481,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
 

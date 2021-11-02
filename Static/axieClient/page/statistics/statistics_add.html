@@ -45,22 +45,22 @@
 	<div class="layui-form-item layui-row layui-col-xs12">
 		<label class="layui-form-label">axie账号:</label>
 		<div class="layui-input-inline">
-			<select name="account_number_id" id="account_number_id" lay-filter="account_number_id">
+			<select name="account_number_id" id="account_number_id" lay-filter="account_number_id" >
 			</select>
 		</div>
 	</div>
-	<div class="layui-form-item layui-row layui-col-xs12">
-		<label class="layui-form-label">今日胜场</label>
-		<div class="layui-input-block">
-			<input type="text" class="layui-input " id="today_victory" placeholder="请在此输入今日胜场">
-		</div>
-	</div>
-	<div class="layui-form-item layui-row layui-col-xs12">
-		<label class="layui-form-label">今日败场</label>
-		<div class="layui-input-block">
-			<input type="text" class="layui-input " id="today_fail" placeholder="请在此输入今日败场">
-		</div>
-	</div>
+<!--	<div class="layui-form-item layui-row layui-col-xs12">-->
+<!--		<label class="layui-form-label">今日胜场</label>-->
+<!--		<div class="layui-input-block">-->
+			<input type="text" class="layui-input " id="today_victory" placeholder="请在此输入今日胜场" value="1" style="display: none">
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="layui-form-item layui-row layui-col-xs12">-->
+<!--		<label class="layui-form-label">今日败场</label>-->
+<!--		<div class="layui-input-block">-->
+			<input type="text" class="layui-input " id="today_fail" placeholder="请在此输入今日败场" value="1" style="display: none">
+<!--		</div>-->
+<!--	</div>-->
 	<div class="layui-form-item layui-row layui-col-xs12">
 		<label class="layui-form-label">今日瓶子数</label>
 		<div class="layui-input-block">
@@ -207,13 +207,13 @@
 					return false;
 				}
 
-				if($("#earnings").val() == ""){
-
-
-					notice.msg("今日盈利不能为空", {icon: 2});
-
-					return false;
-				}
+				// if($("#earnings").val() == ""){
+				//
+				//
+				// 	notice.msg("今日盈利不能为空", {icon: 2});
+				//
+				// 	return false;
+				// }
 
 				if($("#subsection").val() == ""){
 
@@ -235,7 +235,7 @@
 
 
 				$.ajax({
-					url: global_request_addTodayTotal+"?token="+global_token+"&today_victory="+$("#today_victory").val()+"&today_fail="+$("#today_fail").val()+"&today_bottle="+$("#today_bottle").val()+"&earnings="+$("#earnings").val() +"&action=add&account_number_id="+$("#account_number_id").val()+"&date="+currDate+"&subsection="+$("#subsection").val(),
+					url: global_request_addTodayTotal+"?token="+global_token+"&today_victory="+$("#today_victory").val()+"&today_fail="+$("#today_fail").val()+"&today_bottle="+$("#today_bottle").val()+"&action=add&account_number_id="+$("#account_number_id").val()+"&date="+currDate+"&subsection="+$("#subsection").val(),
 					data: param,
 					// type: "POST",
 					dataType: "json",

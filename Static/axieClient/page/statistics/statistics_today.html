@@ -196,11 +196,10 @@
                 cols: [[
                     {type: 'checkbox'},
                     {field: 'id',title:'id',sort: true,align:"center",width:130},
-                    {field: 'name', title: '所属用户', sort: true,align:"center"},
-                    {field: 'name', title: '账号', sort: true,align:"center"},
+                    {field: 'name', title: 'axie账号', sort: true,align:"center"},
                     {field: 'subsection', title: '分段', sort: true,align:"center"},
-                    {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
-                    {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
+                    // {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
+                    // {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
                     {field: 'today_bottle', title: '今日瓶子总数', sort: true,align:"center"},
                     {field: 'compare', title: '今日获取瓶子数', sort: true,align:"center", templet: function (d) {
 
@@ -214,13 +213,13 @@
 
 
                     }},
-                    {field: 'win_rate', title: '胜率', sort: true,align:"center", templet: function (d) {
-
-                        var str=Number(d.win_rate*100).toFixed(1);
-                        str+="%";
-                        return str;
-
-                    }},
+                    // {field: 'win_rate', title: '胜率', sort: true,align:"center", templet: function (d) {
+                    //
+                    //     var str=Number(d.win_rate*100).toFixed(1);
+                    //     str+="%";
+                    //     return str;
+                    //
+                    // }},
                     {field: 'date', title: '日期',width:120, sort: true,align:"center"},
 
 
@@ -240,14 +239,51 @@
                 ]],
                 done: function (res, curr, count) {
                     $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    merge(res);
                 }
             });
+
+            //合并单元格函数方法
+            function merge(res) {
+
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                // var columsName = ['id','name'];//需要合并的列名称
+                // var columsIndex = [0,1];//需要合并的列索引值
+                var columsName = ['date'];//需要合并的列名称
+                var columsIndex = [6];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        }else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
+
 
             // 添加账号的点击事件
             form.on('submit(userTbSearch)', function (data) {
 
                 var index = layui.layer.open({
-                    area: ['520px', '465px'],
+                    area: ['520px', '450px'],
                     fixed: false, //不固定
                     maxmin: false,
                     title : "添加今日统计",

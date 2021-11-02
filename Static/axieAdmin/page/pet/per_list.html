@@ -207,18 +207,18 @@
                     ,last: "尾页"//不显示尾页
                 },
                 height : "full-100",
-                limit : 15,
+                limit : 100,
                 limits : [15,30,50,100],
                 id : "systemLog",
                 cols: [[
                     {type: 'checkbox'},
                     {field: 'id',title:'id',sort: true,align:"center",width:130},
                     {field: 'remark', title: '备注', sort: true,align:"center"},
-                    {field: 'phone', title: '手机', sort: true,align:"center"},
-                    {field: 'name', title: '邮箱', sort: true,align:"center"},
+                    {field: 'phone', title: '手机',width:105, sort: true,align:"center"},
+                    {field: 'name', title: '邮箱',minWidth:215, sort: true,align:"center"},
                     {field: 'baby_id', title: '宠物ID',width:120, sort: true,align:"center"},
                     {field: 'price', title: '价格(ETH)', sort: true,align:"center"},
-
+                    {field: 'prices', title: '总价格(ETH)', sort: true,align:"center"},
                     // {field: 'status', title: '状态', sort: true,align:"center",width:130,templet:function(d){
                     //
                     //         return '<button class="layui-btn  layui-btn-xs" style="background-color: #faa64b;border-color: #faa64b;">'+'正常'+'</button>'
@@ -253,17 +253,159 @@
                     {field: 'created_at', title: '创建时间',align:"center",width:175, sort: true, templet: function (d) {
                             return util.toDateString(d.created_at* 1000);
                     }},
-                    {
-                        field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
-                            return util.toDateString(d.updated_at* 1000);
-                        }, sort: true
-                    },
+                    // {
+                    //     field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
+                    //         return util.toDateString(d.updated_at* 1000);
+                    //     }, sort: true
+                    // },
                     {title: '操作', width:180, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]],
                 done: function (res, curr, count) {
                     $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    // console.log("res",res);
+                    // console.log("curr",curr);
+                    // console.log("count",count);
+
+                    // var map = {};
+                    // var dest = [];
+                    // for(var i = 0; i < res.data.length; i++){
+                    //     var ai = res.data[i];
+                    //     // console.log("ai",ai);
+                    //     if(!map[ai.id]){
+                    //         dest.push({
+                    //             id: ai.id,
+                    //             account_number_id:ai.account_number_id,
+                    //             compare: ai.compare,
+                    //             created_at: ai.created_at,
+                    //             date: ai.date,
+                    //             kinds: ai.kinds,
+                    //             name: ai.name,
+                    //             price: ai.price,
+                    //             status: ai.status,
+                    //             updated_at: ai.updated_at,
+                    //             user_id: ai.user_id,
+                    //             user_name: ai.user_name,
+                    //             data: [ai]
+                    //         });
+                    //         map[ai.id] = ai;
+                    //     }else{
+                    //         for(var j = 0; j < dest.length; j++){
+                    //             var dj = dest[j];
+                    //             if(dj.phone == ai.phone){
+                    //                 dj.data.push(ai);
+                    //                 break;
+                    //             }
+                    //         }
+                    //     }
+                    //
+                    // }
+                    //
+                    // // console.log("map",map);
+                    // console.log("dest",dest);
+
+                    merge(res);
+                    // /* 需要合并栏目的数组信息 */
+                    // var merge_column_infos = [
+                    //     {
+                    //         /* 该字段起到一个标注作用，类似于注释 */
+                    //         field: "interface_group_name",
+                    //         index: 0   /* 需要合并栏目的索引 */
+                    //     },
+                    //     {
+                    //         /* 该字段起到一个标注作用，类似于注释 */
+                    //         field: "interface_name",
+                    //         index: 1   /* 需要合并栏目的索引 */
+                    //     }
+                    // ];
+                    //
+                    //
+                    // /* 从第几行开始遍历合并 去除表头就是 1 咯 */
+                    // var start_tr_index = 1;
+                    // /* 查找到需要合并表格所有的 tr */
+                    // var tr_s = $("#alert_table_div table").find("tr");
+                    // /* 开始遍历需要合并的栏目 */
+                    // for (var merge_item of merge_column_infos) {
+                    //     var field = merge_item.field;
+                    //     /* 需要合并栏目的索引 */
+                    //     var index = merge_item.index;
+                    //     /* 需要合并栏目的数量 */
+                    //     var merge_num = 0;
+                    //     /* 需要合并栏目的 td */
+                    //     var merge_tds = [];
+                    //     /* 开始遍历需要合并表格的所有 tr */
+                    //     for (var i = start_tr_index; i < tr_s.length; i++) {
+                    //         /* 当前 td */
+                    //         var cur_td = tr_s.eq(i).find("td").eq(index);
+                    //         /* 下一个 td */
+                    //         var next_td = tr_s.eq(i + 1).find("td").eq(index);
+                    //         /* 当前 td 的 text */
+                    //         var cur_text = $(cur_td).text();
+                    //         /* 下一个 td 的 text 当遍历到最后默认为空 */
+                    //         var next_text = $(next_td).text();
+                    //         /* 如果当前 td = 下一个 td */
+                    //         if (cur_text == next_text) {
+                    //             /* 放入到合并 td 的集合中 */
+                    //             merge_tds.push(cur_td);
+                    //             /* 需要合并的 td 数量加 1 */
+                    //             merge_num++;
+                    //         } else {
+                    //             /* 如果 如果当前 td != 下一个 td 且要合并的 td 数量不等于 0 */
+                    //             if (merge_num != 0) {
+                    //                 /* 第一个 td 合并    因为动态添加 rowspan 属性是向下延申  */
+                    //                 $(merge_tds[0]).attr("rowspan", merge_num + 1);
+                    //                 /* 遍历所有的需要合并的 td 将他们的属性设置为 不可见 */
+                    //                 for (var d = 1; d < merge_tds.length; d++) {
+                    //                     $(merge_tds[d]).addClass("layui-hide");
+                    //                 }
+                    //                 /* 当前 td 属性也需要设置为不可见 */
+                    //                 $(cur_td).addClass("layui-hide");
+                    //             }
+                    //             /* 重置合并 td 数据 */
+                    //             merge_num = 0;
+                    //             merge_tds = [];
+                    //         }
+                    //     }
+                    // }
+
                 }
+
+
             });
+
+            //合并单元格函数方法
+            function merge(res) {
+
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                // var columsName = ['id','name'];//需要合并的列名称
+                // var columsIndex = [0,1];//需要合并的列索引值
+                var columsName = ['remark','phone','name','prices'];//需要合并的列名称
+                var columsIndex = [2,3,4,7];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        }else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
 
             // 添加账号的点击事件
             form.on('submit(userTbSearch)', function (data) {
@@ -370,6 +512,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
 
@@ -412,6 +555,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
                 }else{
@@ -434,6 +578,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
                 }

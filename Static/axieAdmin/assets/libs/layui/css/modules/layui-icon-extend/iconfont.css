@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2881749 */
-  src: url('iconfont.woff2?t=1634733145165') format('woff2'),
-       url('iconfont.woff?t=1634733145165') format('woff'),
-       url('iconfont.ttf?t=1634733145165') format('truetype');
+  src: url('iconfont.woff2?t=1635065257026') format('woff2'),
+       url('iconfont.woff?t=1635065257026') format('woff'),
+       url('iconfont.ttf?t=1635065257026') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,158 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-naiping:before {
+  content: "\e601";
+}
+
+.icon-naiping1:before {
+  content: "\e602";
+}
+
+.icon-bottleofwine:before {
+  content: "\e62a";
+}
+
+.icon-pingzi:before {
+  content: "\e609";
+}
+
+.icon-pingzi1:before {
+  content: "\e658";
+}
+
+.icon-pingzi2:before {
+  content: "\e803";
+}
+
+.icon-pingzi3:before {
+  content: "\e637";
+}
+
+.icon-huaxuepingzi:before {
+  content: "\e608";
+}
+
+.icon-pingzi-:before {
+  content: "\e65a";
+}
+
+.icon-kelepingzi:before {
+  content: "\e604";
+}
+
+.icon-kelepingzi_:before {
+  content: "\e618";
+}
+
+.icon-yaopingzi:before {
+  content: "\e606";
+}
+
+.icon-bottle:before {
+  content: "\e60a";
+}
+
+.icon-icon-test1:before {
+  content: "\e603";
+}
+
+.icon-chufangchujukitchen-niunaipingshuipingpingzib:before {
+  content: "\e6d3";
+}
+
+.icon--bottle:before {
+  content: "\e751";
+}
+
+.icon-pingzi4:before {
+  content: "\e7d1";
+}
+
+.icon-Pet-Bottle:before {
+  content: "\e6ae";
+}
+
+.icon--:before {
+  content: "\e60b";
+}
+
+.icon-pingzi-1:before {
+  content: "\e610";
+}
+
+.icon-bottle1:before {
+  content: "\e628";
+}
+
+.icon--milk-bottle:before {
+  content: "\e60c";
+}
+
+.icon-FastFood-:before {
+  content: "\e639";
+}
+
+.icon-driftbottle:before {
+  content: "\e65f";
+}
+
+.icon--1:before {
+  content: "\e614";
+}
+
+.icon-huaxuepingzi1:before {
+  content: "\e619";
+}
+
+.icon-MilkBottle:before {
+  content: "\e748";
+}
+
+.icon-bottle_px:before {
+  content: "\eacb";
+}
+
+.icon-BottleOpener:before {
+  content: "\e915";
+}
+
+.icon-Bottle:before {
+  content: "\e916";
+}
+
+.icon-WaterBottle:before {
+  content: "\e977";
+}
+
+.icon-huabankaobei:before {
+  content: "\e61a";
+}
+
+.icon-Bottle1:before {
+  content: "\eb59";
+}
+
+.icon-Bottle_2:before {
+  content: "\eb5a";
+}
+
+.icon-daican:before {
+  content: "\e61b";
+}
+
+.icon-bottle2:before {
+  content: "\e6a7";
+}
+
+.icon-pingzi-qipaoshui:before {
+  content: "\e689";
+}
+
+.icon-a-24:before {
+  content: "\e91c";
 }
 
 .icon-icon-account:before {

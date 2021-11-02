@@ -29,6 +29,8 @@
 		/*	width: 100px !important;*/
 		/*}*/
 
+		/*layui 限制下拉框高度*/
+		.layui-unselect dl { max-height:200px; }
 
 
 	</style>
@@ -254,13 +256,45 @@
 							// layer.msg(addResult.msg);
 							notice.msg(addResult.msg, {icon: 1});
 
+							//主动调用总价接口
+							$.ajax({
+								url: global_request_changePrice,
+								type: "GET",
+								dataType: "json",
+								success: function (addResult) {
 
-							setTimeout(function () {
-								var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-								parent.layer.close(index);
-								// window.parent.location.reload();
+									if (addResult.code === 200) {
+										// layer.msg(addResult.msg);
+										// notice.msg(addResult.msg, {icon: 1});
 
-							}, 1300)
+										var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+										parent.layer.close(index);
+
+									} else {
+
+										// layer.msg(addResult.msg);
+										notice.msg(addResult.msg, {icon: 2});
+										// setTimeout(function () {
+										// 	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+										// 	parent.layer.close(index);
+										// 	// window.parent.location.reload();
+										// }, 1300)
+
+									}
+
+
+								},
+
+
+							});
+
+
+							// setTimeout(function () {
+							// 	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+							// 	parent.layer.close(index);
+							// 	// window.parent.location.reload();
+							//
+							// }, 1300)
 
 
 						} else {

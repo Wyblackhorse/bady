@@ -64,10 +64,16 @@
 			<input type="text" class="layui-input " id="remark" placeholder="请在此输入手机">
 		</div>
 	</div>
-	<div class="layui-form-item layui-row layui-col-xs12">
+	<div class="layui-form-item layui-row layui-col-xs12" style="display: none">
 		<label class="layui-form-label">体力上限</label>
 		<div class="layui-input-block">
 			<input type="text" class="layui-input " id="power_up" placeholder="请在此输入体力上限">
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">阵容</label>
+		<div class="layui-input-block">
+			<input type="text" class="layui-input " id="operator" placeholder="请在此输入体力上限">
 		</div>
 	</div>
 
@@ -188,6 +194,14 @@
 					return false;
 				}
 
+				if($("#operator").val() == ""){
+
+
+					notice.msg("阵容不能为空", {icon: 2});
+
+					return false;
+				}
+
 
 				var powerUp;
 				if($("#power_up").val() == ""){
@@ -207,7 +221,7 @@
 				// param['remark'] = $("#remark").val();
 
 				$.ajax({
-					url: global_request_addAccount+"?token="+global_token+"&address="+$("#address").val()+"&mail="+$("#mail").val()+"&remark="+$("#remark").val()+"&action=add&user_id="+$("#user_id").val()+"&power_up="+powerUp,
+					url: global_request_addAccount+"?token="+global_token+"&address="+$("#address").val()+"&mail="+$("#mail").val()+"&remark="+$("#remark").val()+"&action=add&user_id="+$("#user_id").val()+"&power_up="+powerUp+"&operator="+$("#operator").val(),
 					data: param,
 					// type: "POST",
 					dataType: "json",

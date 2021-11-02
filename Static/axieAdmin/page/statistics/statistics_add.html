@@ -29,16 +29,26 @@
 		/*	width: 100px !important;*/
 		/*}*/
 
+		/*layui 限制下拉框高度*/
+		.layui-unselect dl { max-height:200px; }
 
 
 	</style>
 </head>
 <body class="childrenBody">
 <form class="layui-form" style="width:80%;margin-top: 20px">
+
 	<div class="layui-form-item layui-row layui-col-xs12">
 		<label class="layui-form-label">日期</label>
 		<div class="layui-input-inline">
 			<input type="text" class="layui-input" id="test1" placeholder="yyyy-MM-dd">
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">员工:</label>
+		<div class="layui-input-inline">
+			<select name="user_id" id="user_id" lay-filter="user_id">
+			</select>
 		</div>
 	</div>
 	<div class="layui-form-item layui-row layui-col-xs12">
@@ -48,18 +58,18 @@
 			</select>
 		</div>
 	</div>
-	<div class="layui-form-item layui-row layui-col-xs12">
-		<label class="layui-form-label">今日胜场</label>
-		<div class="layui-input-block">
-			<input type="text" class="layui-input " id="today_victory" placeholder="请在此输入今日胜场">
-		</div>
-	</div>
-	<div class="layui-form-item layui-row layui-col-xs12">
-		<label class="layui-form-label">今日败场</label>
-		<div class="layui-input-block">
-			<input type="text" class="layui-input " id="today_fail" placeholder="请在此输入今日败场">
-		</div>
-	</div>
+<!--	<div class="layui-form-item layui-row layui-col-xs12">-->
+<!--		<label class="layui-form-label">今日胜场</label>-->
+<!--		<div class="layui-input-block">-->
+			<input type="text" class="layui-input " id="today_victory" placeholder="请在此输入今日胜场" value="1" style="display: none">
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="layui-form-item layui-row layui-col-xs12">-->
+<!--		<label class="layui-form-label">今日败场</label>-->
+<!--		<div class="layui-input-block">-->
+			<input type="text" class="layui-input " id="today_fail" placeholder="请在此输入今日败场" value="1"  style="display: none">
+<!--		</div>-->
+<!--	</div>-->
 	<div class="layui-form-item layui-row layui-col-xs12">
 		<label class="layui-form-label">今日瓶子数</label>
 		<div class="layui-input-block">
@@ -131,9 +141,10 @@
 				}
 			});
 
+
 			//获取用户列表添加到下拉框中
 			$.ajax({
-				url: global_request_addAccount+"?token="+global_token+"&action=select&limit=3000&page=1",
+				url: global_request_memberInformation+"?token="+global_token+"&action=select&limit=3000&page=1",
 				dataType: 'json',
 				type: 'GET',
 				// data: param,
@@ -157,10 +168,10 @@
 
 					// console.log("returnDataArray",returnDataArray)
 
-					$("#account_number_id").empty();
-
+					$("#user_id").empty();
+					// $('#user_id').append(new Option("全部", "7777777"));// 下拉菜单里添加元素
 					$.each(returnDataArray, function (index, item) {
-						$('#account_number_id').append(new Option(item.remark, item.id));// 下拉菜单里添加元素
+						$('#user_id').append(new Option(item.remark, item.id));// 下拉菜单里添加元素
 					});
 
 					//重新渲染 固定写法
@@ -168,10 +179,108 @@
 
 
 
+					//获取用户列表添加到下拉框中
+					$.ajax({
+						url: global_request_addAccount+"?token="+global_token+"&action=select&limit=3000&page=1&user_id="+returnDataArray[0].id,
+						dataType: 'json',
+						type: 'GET',
+						// data: param,
+						// complete: function () {
+						//     layer.close(loadIndex);
+						// },
+						success: function (dataArray) {
+
+							if (dataArray.code != 0) {
+
+								// console.log(dataArray.msg)
+								// layer.msg(dataArray.msg);
+
+								return false;
+
+							}
+
+
+							var returnDataArray = dataArray.data
+
+
+							// console.log("returnDataArray",returnDataArray)
+
+							$("#account_number_id").empty();
+
+							$.each(returnDataArray, function (index, item) {
+								$('#account_number_id').append(new Option(item.remark, item.id));// 下拉菜单里添加元素
+							});
+
+							//重新渲染 固定写法
+							form.render("select");
+
+
+
+						}
+					})
+
+
 
 
 				}
 			})
+
+
+			/* 下拉框选中事件 */
+			form.on('select(user_id)', function (data) {
+
+				// var loadIndex = layer.load(3,{shade:[0.7,'#fff'],time:10*1000});
+
+				var currSelectReturnID = data.value
+
+				// console.log('tempObj',currSelectReturnID)
+
+
+				//获取账号列表添加到下拉框中
+				$.ajax({
+					url: global_request_addAccount+"?token="+global_token+"&action=select&limit=3000&page=1&user_id="+currSelectReturnID,
+					dataType: 'json',
+					type: 'GET',
+					// data: param,
+					// complete: function () {
+					//     layer.close(loadIndex);
+					// },
+					success: function (dataArray) {
+
+						if (dataArray.code != 0) {
+
+							// console.log(dataArray.msg)
+							// layer.msg(dataArray.msg);
+
+							return false;
+
+						}
+
+
+						var returnDataArray = dataArray.data
+
+
+						// console.log("returnDataArray",returnDataArray)
+
+						$("#account_number_id").empty();
+
+						$.each(returnDataArray, function (index, item) {
+							$('#account_number_id').append(new Option(item.remark, item.id));// 下拉菜单里添加元素
+						});
+
+						//重新渲染 固定写法
+						form.render("select");
+
+
+
+					}
+				})
+
+
+
+				return false;
+			});
+
 
 
 			//添加内容点击事件
@@ -219,6 +328,7 @@
 					return false;
 				}
 
+
 				// if(pares)
 
 
@@ -231,7 +341,7 @@
 
 
 				$.ajax({
-					url: global_request_addTodayTotal+"?token="+global_token+"&today_victory="+$("#today_victory").val()+"&today_fail="+$("#today_fail").val()+"&today_bottle="+$("#today_bottle").val()+"&earnings="+$("#earnings").val() +"&action=add&account_number_id="+$("#account_number_id").val()+"&date="+currDate+"&subsection="+$("#subsection").val(),
+					url: global_request_addStatistics+"?token="+global_token+"&today_victory="+$("#today_victory").val()+"&today_fail="+$("#today_fail").val()+"&today_bottle="+$("#today_bottle").val()+"&earnings="+$("#earnings").val() +"&action=add&account_number_id="+$("#account_number_id").val()+"&date="+currDate+"&subsection="+$("#subsection").val()+"&user_id="+$("#user_id").val(),
 					data: param,
 					// type: "POST",
 					dataType: "json",

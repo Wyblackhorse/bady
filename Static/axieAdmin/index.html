@@ -70,7 +70,7 @@
         <div class="layui-side-scroll">
             <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav" lay-shrink="_all">
                 <li class="layui-nav-item">
-                    <a lay-href="page/console/console.html"><i class="layui-icon iconfont icon-kongzhitai1"></i>&emsp;<cite>控制台</cite></a>
+                    <a lay-href="page/console/console1.html"><i class="layui-icon iconfont icon-kongzhitai1"></i>&emsp;<cite>控制台</cite></a>
                 </li>
                 <li class="layui-nav-item">
                     <a><i class="layui-icon iconfont icon-yonghuguanli8"></i>&emsp;<cite>员工管理</cite></a>
@@ -87,26 +87,33 @@
 <!--                        <dd><a lay-href="page/farm/his_farm_list.html">历史农场信息</a></dd>-->
                     </dl>
                 </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon iconfont icon-chongwugou"></i>&emsp;<cite>宠物管理</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a lay-href="page/pet/per_list.html">宠物信息</a></dd>
-                    </dl>
-                </li>
+
+<!--                <li class="layui-nav-item">-->
+<!--                    <a><i class="layui-icon iconfont icon-chongwugou"></i>&emsp;<cite>宠物管理</cite></a>-->
+<!--                    <dl class="layui-nav-child">-->
+<!--                        <dd><a lay-href="page/pet/per_list.html">宠物信息</a></dd>-->
+<!--                    </dl>-->
+<!--                </li>-->
+
                 <li class="layui-nav-item">
                     <a><i class="layui-icon iconfont icon-icon_xinyong_xianxing_jijin-"></i>&emsp;<cite>统计管理</cite></a>
                     <dl class="layui-nav-child">
-                        <dd><a lay-href="page/statistics/statistics_today.html">今日统计</a></dd>
-<!--                        <dd><a lay-href="page/statistics/statistics_history.html">历史统计</a></dd>-->
-                        <dd><a >历史统计</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/statistics/statistics_history_person.html">个人统计</a></dd>
-                                <dd><a lay-href="page/statistics/statistics_history_person_num.html">个人总统计</a></dd>
-                                <dd><a lay-href="page/statistics/statistics_history.html">所有统计</a></dd>
-                            </dl>
-                        </dd>
+                        <dd><a lay-href="page/statistics/statistics_history_person.html">个人统计</a></dd>
+                        <dd><a lay-href="page/statistics/statistics_history_person_num.html">个人总统计</a></dd>
+                        <dd><a lay-href="page/statistics/statistics_history.html">所有统计</a></dd>
+<!--                        <dd><a lay-href="page/statistics/statistics_today.html">今日统计</a></dd>-->
+<!--&lt;!&ndash;                        <dd><a lay-href="page/statistics/statistics_history.html">历史统计</a></dd>&ndash;&gt;-->
+<!--                        <dd><a >历史统计</a>-->
+<!--                            <dl class="layui-nav-child">-->
+<!--                                <dd><a lay-href="page/statistics/statistics_history_person.html">个人统计</a></dd>-->
+<!--                                <dd><a lay-href="page/statistics/statistics_history_person_num.html">个人总统计</a></dd>-->
+<!--                                <dd><a lay-href="page/statistics/statistics_history.html">所有统计</a></dd>-->
+<!--                            </dl>-->
+<!--                        </dd>-->
                     </dl>
                 </li>
+
+
 <!--                <li class="layui-nav-item">-->
 <!--                    <a><i class="layui-icon layui-icon-log"></i>&emsp;<cite>日志管理</cite></a>-->
 <!--                    <dl class="layui-nav-child">-->
@@ -177,7 +184,7 @@
         admin.putSetting('tabAutoRefresh', true);
         // 默认加载主页
         index.loadHome({
-            menuPath: 'page/console/console.html',
+            menuPath: 'page/console/console1.html',
             menuName: '<i class="layui-icon iconfont icon-kongzhitai1"></i>'
         });
 

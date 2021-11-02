@@ -22,6 +22,20 @@ global_request_get_statistics="http://8.136.97.179:9501/admin/get_statistics";
 //统计管理添加接口
 global_request_addTodayTotal="http://8.136.97.179:9501/admin/addTodayTotal";
 
+//统计管理添加接口
+global_request_addStatistics="http://8.136.97.179:9501/admin/addStatistics";
+
+//个人统计管理删除接口
+global_request_updateStatistics="http://8.136.97.179:9501/admin/updateStatistics";
+
+//改变总价接口
+global_request_changePrice="http://8.136.97.179:9501/admin/changePrice";
+
+//更新最新数据(最准确的)
+global_request_GetTodayStatistics="http://8.136.97.179:9501/admin/GetTodayStatistics";
+
+
+
 
 var getRootPath_webStr = getRootPath_web();
 

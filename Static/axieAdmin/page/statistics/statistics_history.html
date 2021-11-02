@@ -209,26 +209,29 @@
                     // {field: 'user_name', title: '员工', sort: true,align:"center"},
                     // {field: 'name', title: 'axie账号', sort: true,align:"center"},
                     // {field: 'subsection', title: '分段', sort: true,align:"center"},
-                    {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
-                    {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
-                    {field: 'today_bottle', title: '今日盈利', sort: true,align:"center", templet: function (d) {
 
-                            if(parseFloat(d.today_bottle)>0){
-                                return "+"+d.today_bottle;
+                    // {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
+                    // {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
+
+                    {field: 'today_bottle', title: '今日瓶子总数', sort: true,align:"center"},
+                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
+                    {field: 'compare', title: '今日获取瓶子总数', sort: true,align:"center", templet: function (d) {
+
+                            if(parseFloat(d.compare)>0){
+                                return "+"+d.compare;
                             }else{
-                                return "-"+d.today_bottle;
+                                // return "-"+d.compare;
+                                return d.compare;
                             }
 
-                        }},
-                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
-                    {field: 'compare', title: '与昨日比较', sort: true,align:"center"},
-                    {field: 'win_rate', title: '胜率', sort: true,align:"center",totalRow: true, templet: function (d) {
-
-                            var str=Number(d.win_rate*100).toFixed(1);
-                            str+="%";
-                            return str;
-
-                        }},
+                    }},
+                    // {field: 'win_rate', title: '胜率', sort: true,align:"center",totalRow: true, templet: function (d) {
+                    //
+                    //         var str=Number(d.win_rate*100).toFixed(1);
+                    //         str+="%";
+                    //         return str;
+                    //
+                    //     }},
                     {field: 'date', title: '日期',width:120, sort: true,align:"center"},
 
 

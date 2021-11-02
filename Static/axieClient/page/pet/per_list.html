@@ -188,7 +188,7 @@
                     ,last: "尾页"//不显示尾页
                 },
                 height : "full-100",
-                limit : 15,
+                limit : 100,
                 limits : [15,30,50,100],
                 id : "systemLog",
                 cols: [[
@@ -199,7 +199,7 @@
                     {field: 'name', title: '邮箱', sort: true,align:"center"},
                     {field: 'baby_id', title: '宠物ID',width:120, sort: true,align:"center"},
                     {field: 'price', title: '价格(ETH)', sort: true,align:"center"},
-
+                    // {field: 'prices', title: '总价(ETH)', sort: true,align:"center"},
                     // {field: 'status', title: '状态', sort: true,align:"center",width:130,templet:function(d){
                     //
                     //         return '<button class="layui-btn  layui-btn-xs" style="background-color: #faa64b;border-color: #faa64b;">'+'正常'+'</button>'
@@ -234,17 +234,53 @@
                     {field: 'created_at', title: '创建时间',align:"center",width:175, sort: true, templet: function (d) {
                             return util.toDateString(d.created_at* 1000);
                     }},
-                    {
-                        field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
-                            return util.toDateString(d.updated_at* 1000);
-                        }, sort: true
-                    },
+                    // {
+                    //     field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
+                    //         return util.toDateString(d.updated_at* 1000);
+                    //     }, sort: true
+                    // },
                     {title: '操作', width:180, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]],
                 done: function (res, curr, count) {
                     $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    merge(res);
                 }
             });
+
+            //合并单元格函数方法
+            function merge(res) {
+
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                // var columsName = ['id','name'];//需要合并的列名称
+                // var columsIndex = [0,1];//需要合并的列索引值
+                var columsName = ['remark','phone','name',];//需要合并的列名称
+                var columsIndex = [2,3,4];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        }else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
 
             // 添加账号的点击事件
             form.on('submit(userTbSearch)', function (data) {
@@ -309,6 +345,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
                 }else{
@@ -331,6 +368,7 @@
                             // console.log(count);
 
                             layui.layer.close(loadIndex)
+                            merge(res);
                         }
                     },false);
                 }

@@ -58,16 +58,32 @@
                         </div>
                     </div>
 
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="test1" placeholder="yyyy-MM-dd">
+                        </div>
+                    </div>
+
                     <div class="layui-inline">&emsp;
-<!--                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit >-->
-<!--                            <i class="layui-icon">&#xe615;</i>搜索-->
-<!--                        </button>-->
+                        <button class="layui-btn icon-btn currSerachBtn"  lay-submit id="searchBtn">
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
 <!--                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit>-->
 <!--                            <i class="layui-icon layui-icon-add-1"></i>添加统计-->
 <!--                        </button>-->
                         <button class="layui-btn icon-btn currReloadBtn" lay-filter="reloadData" lay-submit style="background-color: #926dde;border-color: #926dde;">
                             <i class="layui-icon layui-icon-refresh"></i>刷新数据
                         </button>
+
+                        <button class="layui-btn icon-btn currReloadBtn" id="GetTodayStatistics"style="background-color: #20232a;border-color: #20232a;">
+                            <i class="layui-icon layui-icon-refresh"></i>更新今日数据
+                        </button>
+
+<!--                        <button class="layui-btn icon-btn currReloadBtn" id="changePrice"  style="background-color: #ED4B9E;border-color: #ED4B9E;">-->
+<!--                            <i class="layui-icon layui-icon-refresh"></i>更新价格-->
+<!--                        </button>-->
+
                     </div>
 <!--                    <div class="layui-inline" style="color: red">&emsp;-->
 <!--                        <span style="font-weight: bold">今日总胜场:</span> <span style="color: red;font-weight: bold" id="total_today_victory">0</span>-->
@@ -96,13 +112,9 @@
 <!--数据表格操作工具栏-->
 <script type="text/html" id="orderListBar">
 
-    <a class="layui-btn layui-btn-normal layui-btn-radius" lay-event="rechargebtn" ><i class="layui-icon layui-icon-rmb"></i>修改</a>
-    <a class="layui-btn layui-btn-normal layui-btn-radius " lay-event="infobtn" style="background-color: #fff;color: #0C0C0C;border: 1px solid #C9C9C9;"><i class="layui-icon">&#xe615;</i>删除</a>
+<!--    <a class="layui-btn layui-btn-normal layui-btn-radius layui-btn-sm" lay-event="changebtn"><i class="layui-icon layui-icon-edit"></i>修改</a>-->
+    <a class="layui-btn layui-btn-normal layui-btn-radius layui-btn-sm layui-btn-danger" lay-event="del" ><i class="layui-icon">&#x1006;</i>删除</a>
 
-<!--    <a class="layui-btn layui-btn-normal layui-btn-radius " lay-event="yuebdbtn" style="background-color: #fb7299;color: #ffffff;"><i class="layui-icon layui-icon-form"></i>余额变动</a>-->
-<!--    <a class="layui-btn layui-btn-normal layui-btn-radius " lay-event="changebtn" style="background-color: #009688"><i class="layui-icon layui-icon-edit"></i>修改余额</a>-->
-<!--    <a class="layui-btn layui-btn-normal layui-btn-radius " lay-event="tixianbtn" style="background-color: #fbc472"><i class="layui-icon layui-icon-down"></i>提现下分</a>-->
-<!--    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>-->
 </script>
 <script>
 
@@ -117,7 +129,13 @@
         global_token = mybck
         var jsondata ;
         var currData = getNowFormatDate()
-        layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect','notice'], function () {
+
+        var currSelectReturnID
+        var currSelectDate = ""
+        var currDateStr= "";
+        var currSelectDateObj = null
+
+        layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect','notice','laydate'], function () {
             var $ = layui.jquery;
             var layer = layui.layer;
             var form = layui.form;
@@ -126,6 +144,25 @@
             var admin = layui.admin;
             var xmSelect = layui.xmSelect;
             var notice = layui.notice;
+            var laydate = layui.laydate;
+
+            //常规用法
+            laydate.render({
+                elem: '#test1'
+                // ,value: currDate
+                ,isInitValue: true
+                ,theme: 'molv'
+                ,done: function(value, date){//选中后的回调
+                    // layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+
+                    // console.log("自带的",date)
+                    currSelectDateObj = date
+                    currSelectDate = value
+                    // console.log("jquery",$("#test1").val())
+
+                }
+            });
+
 
             // console.log("当前日期:",currData)
 
@@ -231,6 +268,7 @@
                 //     '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
                 //     '</p>'].join(''),
                 cellMinWidth: 100,
+                even:true,
                 page :  { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
                     layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                     //,curr: 5 //设定初始在第 5 页
@@ -238,9 +276,9 @@
                     ,first: "首页" //不显示首页
                     ,last: "尾页"//不显示尾页
                 },
-                // totalRow:true,
+                totalRow:true,
                 height : "full-100",
-                limit : 15,
+                limit : 100,
                 limits : [15,30,50,100],
                 // response: {
                 //     // statusName: 'code', //规定数据状态的字段名称，默认：code
@@ -248,54 +286,136 @@
                 //     dataName: 'result' //规定数据列表的字段名称，默认：data
                 //     ,countName: 'count' //规定数据总数的字段名称，默认：count
                 // },
-                // id : "systemLog",
+                id : "systemLog",
                 cols: [[
                     {type: 'checkbox'},
-                    {field: 'id',title:'id',sort: true,align:"center",width:130},
+                    // {field: 'id',title:'id',sort: true,align:"center",width:130,totalRowText:'合计'},
                     {field: 'user_name', title: '员工', sort: true,align:"center"},
+                    {field: 'remark', title: '备注', sort: true,align:"center"},
                     {field: 'name', title: 'axie账号', sort: true,align:"center"},
-                    {field: 'subsection', title: '分段', sort: true,align:"center"},
-                    {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
-                    {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
-                    {field: 'today_bottle', title: '今日盈利', sort: true,align:"center", templet: function (d) {
-
-                            if(parseFloat(d.today_bottle)>0){
-                                return "+"+d.today_bottle;
+                    {field: 'subsection_yes', title: '昨日分段', sort: true,align:"center"},
+                    {field: 'subsection', title: '今日分段', sort: true,align:"center",templet: function (d) {
+                            if(parseInt(d.subsection) - parseInt(d.subsection_yes) > 0) {
+                                return '<span style="color:green;font-size: 14px;font-weight: bold">'+d.subsection+'</span><span style="margin-top: -5px;display:inline-block;margin-left: 3px;vertical-align: middle;color:green; font-size: 20px;font-weight: bold">↑</span>'
                             }else{
-                                return "-"+d.today_bottle;
+                                return '<span style="color:red;font-size: 14px;font-weight: bold">'+d.subsection+'</span><span style="margin-top: -5px;display:inline-block;margin-left: 3px;vertical-align: middle;color:red; font-size: 20px;font-weight: bold">↓</span>'
+                            }
+                    }},
+
+                    // {field: 'win_rate', title: '胜率', sort: true,align:"center",templet: function (d) {
+                    //
+                    //         var str= String(d.win_rate)
+                    //         str+="%";
+                    //         return str;
+                    //
+                    //         // var str=Number(d.win_rate*100).toFixed(1);
+                    //         // str+="%";
+                    //         // return str;
+                    //
+                    // }},
+
+                    // {field: 'avg_time', title: '平均耗时(分)', sort: true,align:"center", templet: function (d) {
+                    //
+                    //     if(d.avg_time === null || d.avg_time == 0){
+                    //         return 0
+                    //     }else{
+                    //         return (parseFloat(d.avg_time.toString().split('.')[0]) / 60).toString().split('.')[0]
+                    //     }
+                    //
+                    //
+                    // }},
+
+                    // {field: 'today_victory', title: '今日胜场', sort: true,align:"center"},
+                    // {field: 'today_fail', title: '今日败场', sort: true,align:"center"},
+
+                    {field: 'today_bottle', title: '拥有瓶子总数',width:140, sort: true,align:"center",totalRow:true},
+                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
+
+                    // {field: 'earnings', title: '今日获取瓶子总数',width:160, sort: true,align:"center",totalRow:true, templet: function (d) {
+                    //
+                    //         if(d.earnings === null){
+                    //             return 0;
+                    //         }else{
+                    //             return d.earnings;
+                    //         }
+                    //
+                    //
+                    // }},
+
+                    {field: 'compare', title: '相比昨天多/少瓶子数',width:175, sort: true,align:"center",totalRow:true, templet: function (d) {
+
+                            if(parseFloat(d.compare)>0){
+                                return "+"+d.compare;
+                            }else if(parseFloat(d.compare) == 0){
+                                return d.compare;
+                                // return d.compare;
+                            }else {
+                                return d.compare;
+                                // return d.compare;
                             }
 
-                    }},
-                    // {field: 'earnings', title: '今日盈利', sort: true,align:"center"},
-                    {field: 'compare', title: '与昨日比较', sort: true,align:"center"},
-                    {field: 'win_rate', title: '胜率', sort: true,align:"center",totalRow: true, templet: function (d) {
 
-                        var str=Number(d.win_rate*100).toFixed(1);
-                        str+="%";
-                        return str;
+                        }},
 
-                    }},
+                    // {field: 'price', title: '总价', width:100,totalRow:true, sort: true,align:"center"},
+
                     {field: 'date', title: '日期',width:120, sort: true,align:"center"},
 
+                    {field: 'created_at', title: '创建时间',align:"center",width:175, sort: true, templet: function (d) {
+                            // return util.toDateString(d.created_at* 1000);
+                            return util.toDateString(d.created_at* 1000);
 
+                    }},
+                    {
+                        field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
+                            return util.toDateString(d.updated_at* 1000);
+                        }, sort: true
+                    },
 
-                    //
-                    //
-                    // {field: 'created_at', title: '创建时间',align:"center",width:175, sort: true, templet: function (d) {
-                    //         return util.toDateString(d.created_at* 1000);
-                    // }},
-                    // {
-                    //     field: 'updated_at', title: '更新时间',align:"center",width:175, templet: function (d) {
-                    //         return util.toDateString(d.updated_at* 1000);
-                    //     }, sort: true
-                    // },
-
-                    // {title: '操作', width:290, templet:'#orderListBar',fixed:"right",align:"center"}
+                    {title: '操作', width:100, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]],
                 done: function (res, curr, count) {
-                    $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    // $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+                    // merge(res);
                 }
             });
+
+            //合并单元格函数方法
+            function merge(res) {
+
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                // var columsName = ['id','name'];//需要合并的列名称
+                // var columsIndex = [0,1];//需要合并的列索引值
+                var columsName = ['user_name','remark','price','date'];//需要合并的列名称
+                var columsIndex = [2,3,10,11];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        }else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
+
+
 
             // // 添加账号的点击事件
             // form.on('submit(userTbSearch)', function (data) {
@@ -329,184 +449,331 @@
             /* 下拉框选中事件 */
             form.on('select(user_id_filter)', function (data) {
 
-                var loadIndex = layer.load(3,{shade:[0.7,'#fff'],time:10*1000});
+                // var loadIndex = layer.load(3,{shade:[0.7,'#fff'],time:10*1000});
 
-                var currSelectReturnID = data.value
+                 currSelectReturnID = data.value
 
                 // console.log('tempObj',currSelectReturnID)
 
-
-                if(currSelectReturnID == "7777777"){
-                    //重载列表
-                    insTb.reload({
-                        url: global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1",
-                        method: 'GET',
-                        // where: {
-                        //     status:1,
-                        //     id:currSelectReturnID,
-                        //     action:'select'
-                        // },
-                        done: function(res, curr, count){
-                            //如果是异步请求数据方式，res即为你接口返回的信息。
-                            //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                            // console.log(res);
-                            // //得到当前页码
-                            // console.log(curr);
-                            // //得到数据总量
-                            // console.log(count);
-
-                            layui.layer.close(loadIndex)
-                        }
-                    },false);
-
-
-                    //获取用户列表添加到下拉框中
-                    $.ajax({
-                        url: global_request_get_statistics+"?token="+global_token+"&action=select&date="+currData+"&kinds=2",
-                        dataType: 'json',
-                        type: 'GET',
-                        // data: param,
-                        // complete: function () {
-                        //     layer.close(loadIndex);
-                        // },
-                        success: function (dataArray) {
-
-                            if (dataArray.code != 0) {
-
-                                // console.log(dataArray.msg)
-                                // layer.msg(dataArray.msg);
-
-                                return false;
-
-                            }
-
-
-                            var returnDataArray = dataArray.data[0]
-                            // console.log("returnDataArray",returnDataArray)
-
-                            $("#total_today_victory").text(returnDataArray.today_victory)
-                            $("#total_today_fail").text(returnDataArray.today_fail)
-
-                            var str_win_rate=Number(returnDataArray.win_rate*100).toFixed(1);
-                            str_win_rate+="%";
-                            $("#total_win_rate").text(str_win_rate)
-
-                            $("#total_today_bottle").text(returnDataArray.today_bottle)
-                            $("#total_compare").text(returnDataArray.compare)
-
-
-
-
-
-
-                        }
-                    })
-
-
-                }else{
-                    //重载列表
-                    insTb.reload({
-                        url: global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1&user_id="+currSelectReturnID,
-                        method: 'GET',
-                        // where: {
-                        //     status:1,
-                        //     id:currSelectReturnID,
-                        //     action:'select'
-                        // },
-                        done: function(res, curr, count){
-                            //如果是异步请求数据方式，res即为你接口返回的信息。
-                            //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                            // console.log(res);
-
-
-                            // var currRes = res.data
-
-                            // var today_victory = currRes.today_victory
-                            // var today_victory = currRes.today_fail
-                            // var today_victory = currRes.win_rate
-                            //
-                            // $("#total_today_victory").text(returnDataArray.today_victory)
-                            // $("#total_today_fail").text(returnDataArray.today_fail)
-                            // $("#total_win_rate").text(returnDataArray.win_rate)
-                            // $("#total_today_bottle").text(returnDataArray.today_bottle)
-                            // $("#total_compare").text(returnDataArray.compare)
-
-
-                            // //得到当前页码
-                            // console.log(curr);
-                            // //得到数据总量
-                            // console.log(count);
-
-                            layui.layer.close(loadIndex)
-                        }
-                    },false);
-
-                    //获取用户列表添加到下拉框中
-                    $.ajax({
-                        url: global_request_get_statistics+"?token="+global_token+"&action=select&date="+currData+"&kinds=3&user_id="+currSelectReturnID,
-                        dataType: 'json',
-                        type: 'GET',
-                        // data: param,
-                        // complete: function () {
-                        //     layer.close(loadIndex);
-                        // },
-                        success: function (dataArray) {
-
-                            if (dataArray.code != 0) {
-
-                                // console.log(dataArray.msg)
-                                // layer.msg(dataArray.msg);
-
-                                return false;
-
-                            }
-
-
-                            // console.log(dataArray.data)
-
-                            if(dataArray.data.length === 0 ){
-
-                                $("#total_today_victory").text(0)
-                                $("#total_today_fail").text(0)
-                                // $("#total_win_rate").text(returnDataArray.win_rate)
-
-
-                                $("#total_win_rate").text("0%")
-                                $("#total_today_bottle").text(0)
-                                $("#total_compare").text(0)
-
-                            }else{
-                                var returnDataArray = dataArray.data[0]
-
-                                // console.log("returnDataArray",returnDataArray)
-
-                                $("#total_today_victory").text(returnDataArray.today_victory)
-                                $("#total_today_fail").text(returnDataArray.today_fail)
-                                // $("#total_win_rate").text(returnDataArray.win_rate)
-
-                                var str_win_rate=Number(returnDataArray.win_rate*100).toFixed(1);
-                                str_win_rate+="%";
-                                $("#total_win_rate").text(str_win_rate)
-                                $("#total_today_bottle").text(returnDataArray.today_bottle)
-                                $("#total_compare").text(returnDataArray.compare)
-                            }
-
-
-
-
-
-
-
-                        }
-                    })
-
-
-                }
+                //
+                // if(currSelectReturnID == "7777777"){
+                //     //重载列表
+                //     insTb.reload({
+                //         url: global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1",
+                //         method: 'GET',
+                //         // where: {
+                //         //     status:1,
+                //         //     id:currSelectReturnID,
+                //         //     action:'select'
+                //         // },
+                //         done: function(res, curr, count){
+                //             //如果是异步请求数据方式，res即为你接口返回的信息。
+                //             //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                //             // console.log(res);
+                //             // //得到当前页码
+                //             // console.log(curr);
+                //             // //得到数据总量
+                //             // console.log(count);
+                //
+                //             layui.layer.close(loadIndex)
+                //             merge(res);
+                //         }
+                //     },false);
+                //
+                //
+                //     //获取用户列表添加到下拉框中
+                //     $.ajax({
+                //         url: global_request_get_statistics+"?token="+global_token+"&action=select&date="+currData+"&kinds=2",
+                //         dataType: 'json',
+                //         type: 'GET',
+                //         // data: param,
+                //         // complete: function () {
+                //         //     layer.close(loadIndex);
+                //         // },
+                //         success: function (dataArray) {
+                //
+                //             if (dataArray.code != 0) {
+                //
+                //                 // console.log(dataArray.msg)
+                //                 // layer.msg(dataArray.msg);
+                //
+                //                 return false;
+                //
+                //             }
+                //
+                //
+                //             var returnDataArray = dataArray.data[0]
+                //             // console.log("returnDataArray",returnDataArray)
+                //
+                //             $("#total_today_victory").text(returnDataArray.today_victory)
+                //             $("#total_today_fail").text(returnDataArray.today_fail)
+                //
+                //             var str_win_rate=Number(returnDataArray.win_rate*100).toFixed(1);
+                //             str_win_rate+="%";
+                //             $("#total_win_rate").text(str_win_rate)
+                //
+                //             $("#total_today_bottle").text(returnDataArray.today_bottle)
+                //             $("#total_compare").text(returnDataArray.compare)
+                //
+                //
+                //
+                //
+                //
+                //
+                //         }
+                //     })
+                //
+                //
+                // }else{
+                //     //重载列表
+                //     insTb.reload({
+                //         url: global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1&user_id="+currSelectReturnID,
+                //         method: 'GET',
+                //         // where: {
+                //         //     status:1,
+                //         //     id:currSelectReturnID,
+                //         //     action:'select'
+                //         // },
+                //         done: function(res, curr, count){
+                //             //如果是异步请求数据方式，res即为你接口返回的信息。
+                //             //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                //             // console.log(res);
+                //
+                //
+                //             // var currRes = res.data
+                //
+                //             // var today_victory = currRes.today_victory
+                //             // var today_victory = currRes.today_fail
+                //             // var today_victory = currRes.win_rate
+                //             //
+                //             // $("#total_today_victory").text(returnDataArray.today_victory)
+                //             // $("#total_today_fail").text(returnDataArray.today_fail)
+                //             // $("#total_win_rate").text(returnDataArray.win_rate)
+                //             // $("#total_today_bottle").text(returnDataArray.today_bottle)
+                //             // $("#total_compare").text(returnDataArray.compare)
+                //
+                //
+                //             // //得到当前页码
+                //             // console.log(curr);
+                //             // //得到数据总量
+                //             // console.log(count);
+                //
+                //             layui.layer.close(loadIndex)
+                //             merge(res);
+                //         }
+                //     },false);
+                //
+                //     //获取用户列表添加到下拉框中
+                //     $.ajax({
+                //         url: global_request_get_statistics+"?token="+global_token+"&action=select&date="+currData+"&kinds=3&user_id="+currSelectReturnID,
+                //         dataType: 'json',
+                //         type: 'GET',
+                //         // data: param,
+                //         // complete: function () {
+                //         //     layer.close(loadIndex);
+                //         // },
+                //         success: function (dataArray) {
+                //
+                //             if (dataArray.code != 0) {
+                //
+                //                 // console.log(dataArray.msg)
+                //                 // layer.msg(dataArray.msg);
+                //
+                //                 return false;
+                //
+                //             }
+                //
+                //
+                //             // console.log(dataArray.data)
+                //
+                //             if(dataArray.data.length === 0 ){
+                //
+                //                 $("#total_today_victory").text(0)
+                //                 $("#total_today_fail").text(0)
+                //                 // $("#total_win_rate").text(returnDataArray.win_rate)
+                //
+                //
+                //                 $("#total_win_rate").text("0%")
+                //                 $("#total_today_bottle").text(0)
+                //                 $("#total_compare").text(0)
+                //
+                //             }else{
+                //                 var returnDataArray = dataArray.data[0]
+                //
+                //                 // console.log("returnDataArray",returnDataArray)
+                //
+                //                 $("#total_today_victory").text(returnDataArray.today_victory)
+                //                 $("#total_today_fail").text(returnDataArray.today_fail)
+                //                 // $("#total_win_rate").text(returnDataArray.win_rate)
+                //
+                //                 var str_win_rate=Number(returnDataArray.win_rate*100).toFixed(1);
+                //                 str_win_rate+="%";
+                //                 $("#total_win_rate").text(str_win_rate)
+                //                 $("#total_today_bottle").text(returnDataArray.today_bottle)
+                //                 $("#total_compare").text(returnDataArray.compare)
+                //             }
+                //
+                //
+                //
+                //
+                //
+                //
+                //
+                //         }
+                //     })
+                //
+                //
+                // }
 
 
 
                 return false;
             });
+
+            //搜索按钮点击事件
+            $("#searchBtn").click(function () {
+
+
+                if(currSelectReturnID == undefined || currSelectReturnID == "7777777"){
+
+
+                    currUrlStr =  global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1"
+
+                }else{
+
+                    currUrlStr =  global_request_get_statistics+"?token="+global_token+"&action=select"+"&kinds=1&user_id="+currSelectReturnID
+
+                }
+
+                // console.log("currSelectDateObj",currSelectDateObj,$.isEmptyObject(currSelectDateObj))
+                // $.isEmptyObject(currSelectDateObj)
+                if(currSelectDate == "" || !currSelectDate){
+                    // console.log("currSelectDate",typeof currSelectDate)
+                    // currUrlStr = currUrlStr
+
+                }else{
+                    currDateStr = "&date="+currSelectDate
+                    currUrlStr = currUrlStr + currDateStr
+                }
+
+                // console.log(currUrlStr)
+
+                //重载列表
+                insTb.reload({
+                    url: currUrlStr,
+                    method: 'GET',
+                    // where: {
+                    //     status:1,
+                    //     id:currSelectReturnID,
+                    //     action:'select'
+                    // },
+                    done: function(res, curr, count){
+                        //如果是异步请求数据方式，res即为你接口返回的信息。
+                        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                        // console.log(res);
+                        // //得到当前页码
+                        // console.log(curr);
+                        // //得到数据总量
+                        // console.log(count);
+
+                        // layui.layer.close(loadIndex)
+                        // merge(res);
+                    }
+                },false);
+
+
+                return false
+
+            })
+
+
+            //更新今日最新数据
+            $("#GetTodayStatistics").click(function () {
+                $.ajax({
+                    url: global_request_GetTodayStatistics+"?token="+global_token,
+                    // data: param,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (addResult) {
+
+                        if (addResult.code === 200) {
+                            // layer.msg(addResult.msg);
+                            notice.msg(addResult.msg, {icon: 1});
+                            setTimeout(function () {
+                                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                                parent.layer.close(index);
+                                // window.location.reload();
+                                table.reload('systemLog', {});
+                            }, 1300)
+
+                        } else {
+
+                            // layer.msg(addResult.msg);
+                            notice.msg(addResult.msg, {icon: 2});
+
+
+                        }
+
+
+                    },
+                    end : function() {//弹窗关闭后的回调函数
+                        //利用laypage实现局部刷新,以下两种方式都可以
+                        // $(".layui-laypage-btn").click()
+                        //直接刷新当前修改的行
+                        // $(".layui-laypage-btn")[0].click()
+                        // window.parent.location.reload();
+                    }
+
+                });
+
+                return false
+
+            })
+
+            //更新价格
+            $("#changePrice").click(function () {
+                $.ajax({
+                    url: global_request_changePrice+"?token="+global_token,
+                    // data: param,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (addResult) {
+
+                        if (addResult.code === 200) {
+                            // layer.msg(addResult.msg);
+                            notice.msg(addResult.msg, {icon: 1});
+                            setTimeout(function () {
+                                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                                parent.layer.close(index);
+                                // window.location.reload();
+                                table.reload('systemLog', {});
+                            }, 1300)
+
+                        } else {
+
+                            // layer.msg(addResult.msg);
+                            notice.msg(addResult.msg, {icon: 2});
+
+
+                        }
+
+
+                    },
+                    end : function() {//弹窗关闭后的回调函数
+                        //利用laypage实现局部刷新,以下两种方式都可以
+                        // $(".layui-laypage-btn").click()
+                        //直接刷新当前修改的行
+                        // $(".layui-laypage-btn")[0].click()
+                        // window.parent.location.reload();
+                    }
+
+                });
+
+                return false
+
+            })
+
+
 
 
             /* 表格工具条点击事件 */
@@ -529,190 +796,88 @@
 
 
 
-                            if(currDatas) {
+                            // if(currDatas) {
+                            //
+                            //     //不显示出来的回显数据
+                            //     body.find("#money").val(currDatas.money);
+                            //
+                            // }
 
-                                //不显示出来的回显数据
-                                body.find("#money").val(currDatas.money);
 
+                        },
+                        end : function() {//弹窗关闭后的回调函数
+                            //利用laypage实现局部刷新,以下两种方式都可以
+                            // $(".layui-laypage-btn").click()
+                            //直接刷新当前修改的行
+                            $(".layui-laypage-btn")[0].click()
+
+                        }
+                    })
+                    window.sessionStorage.setItem("index",index);
+                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                    $(window).on("resize",function(){
+                        layui.layer.full(window.sessionStorage.getItem("index"));
+                    })
+
+                }
+
+                else if (obj.event === 'del') { // 删除
+
+                    layer.confirm('系统将删除当前统计数据，确认要删除吗？', {
+                        icon:2,
+                        title:'温馨提示',
+                        skin: 'layui-layer-admin',
+                        shade: .1
+                    }, function (i) {
+                        layer.close(i);
+                        // var loadIndex = layer.load(2);
+
+                        var param = {};
+
+                        $.ajax({
+                            url: global_request_updateStatistics+"?token="+global_token+"&action=del&id="+currDatas.id,
+                            // data: param,
+                            type: "GET",
+                            dataType: "json",
+                            success: function (addResult) {
+
+                                if (addResult.code === 200) {
+                                    // layer.msg(addResult.msg);
+                                    notice.msg(addResult.msg, {icon: 1});
+                                    setTimeout(function () {
+                                        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                                        parent.layer.close(index);
+                                        // window.location.reload();
+                                        table.reload('systemLog', {});
+                                    }, 1300)
+
+                                } else {
+
+                                    // layer.msg(addResult.msg);
+                                    notice.msg(addResult.msg, {icon: 2});
+
+
+                                }
+
+
+                            },
+                            end : function() {//弹窗关闭后的回调函数
+                                //利用laypage实现局部刷新,以下两种方式都可以
+                                // $(".layui-laypage-btn").click()
+                                //直接刷新当前修改的行
+                                // $(".layui-laypage-btn")[0].click()
+                                // window.parent.location.reload();
                             }
 
+                        });
 
-                        },
-                        end : function() {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            $(".layui-laypage-btn")[0].click()
-
-                        }
-                    })
-                    window.sessionStorage.setItem("index",index);
-                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-                    $(window).on("resize",function(){
-                        layui.layer.full(window.sessionStorage.getItem("index"));
-                    })
-
-                } else if (obj.event === 'infobtn') { // 详情
-                    jsondata = JSON.stringify(currDatas)
-                    var index = layui.layer.open({
-                        area: ['602px', '600px'],
-                        fixed: false, //不固定
-                        maxmin: false,
-                        title : "查看当前玩家详情",
-                        skin: 'layui-layer-rim',//加上边框
-                        type : 2,
-                        content : "user_list_info.html",
-                        success : function(layero, index){
-                            var body = layui.layer.getChildFrame('body', index);
-
-                            if(currDatas) {
-
-
-                                //-------基本信息-------
-                                body.find("#post_id").html(currDatas.id);
-                                body.find("#post_username").html(currDatas.username);
-                                // $("#post_password").val(currDatas.password);
-                                body.find("#post_password").val(currDatas.password);
-                                // body.find("#post_password").html(currDatas.password);
-                                body.find("#post_phone").html(currDatas.phone);
-                                body.find("#post_head_image").html(currDatas.head_image);
-                                body.find("#post_nickname").html(currDatas.nickname);
-                                body.find("#post_status").html(currDatas.status);
-                                body.find("#qqNums").html(currDatas.qq_nums);
-
-
-                                //-------资金信息-------
-                                body.find("#post_money").html(currDatas.money);
-                                body.find("#post_pay_password").html(currDatas.pay_password);
-                                body.find("#post_freeze_money").html(currDatas.freeze_money);
-                                body.find("#post_withdraw_freeze_money").html(currDatas.withdraw_freeze_money);
-                                body.find("#post_running").html(currDatas.running);
-
-
-
-                                //-------其他信息-------
-
-                                body.find("#post_this_ip").html(currDatas.this_ip);
-                                body.find("#post_last_ip").html(currDatas.last_ip);
-                                body.find("#post_this_address").html(currDatas.this_address);
-                                body.find("#post_last_address").html(currDatas.last_address);
-                                body.find("#post_login_user_agent").html(currDatas.login_user_agent);
-                                body.find("#post_consumption_level_id").html(currDatas.consumption_level_id);
-
-
-                            }
-
-
-                        },
-                        end : function() {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            $(".layui-laypage-btn")[0].click()
-
-                        }
-                    })
-                    window.sessionStorage.setItem("index",index);
-                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-                    $(window).on("resize",function(){
-                        layui.layer.full(window.sessionStorage.getItem("index"));
-                    })
-
-                } else if (obj.event === 'yuebdbtn') { // 余额变动
-
-                    jsondata = JSON.stringify(currDatas)
-                    var index = layui.layer.open({
-                        area: ['1400px', '600px'],
-                        fixed: false, //不固定
-                        maxmin: false,
-                        title : "当前用户余额变动记录",
-                        skin: 'layui-layer-rim',//加上边框
-                        type : 2,
-                        content : "user_Insufficientbalancerecordlist.html",
-                        success : function(layero, index){
-                            // var body = layui.layer.getChildFrame('body', index);
-
-                        },
-                        end : function() {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            // $(".layui-laypage-btn")[0].click()
-
-                        }
-                    })
-                    window.sessionStorage.setItem("index",index);
-                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-                    $(window).on("resize",function(){
-                        layui.layer.full(window.sessionStorage.getItem("index"));
-                    })
-
-
+                    });
 
 
                 }
-                else if (obj.event === 'tixianbtn') { // 余额变动
-
-                    jsondata = JSON.stringify(currDatas)
-                    var index = layui.layer.open({
-                        area: ['600px', '200px'],
-                        fixed: false, //不固定
-                        maxmin: false,
-                        title : "管理员给用户下分",
-                        skin: 'layui-layer-rim',//加上边框
-                        type : 2,
-                        content : "user_list_initiative_below.html",
-                        success : function(layero, index){
-                            var body = layui.layer.getChildFrame('body', index);
-
-                        },
-                        end : function() {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            $(".layui-laypage-btn")[0].click()
-                        }
-                    })
-                    window.sessionStorage.setItem("index",index);
-                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-                    $(window).on("resize",function(){
-                        layui.layer.full(window.sessionStorage.getItem("index"));
-                    })
 
 
 
-                }
-                else if (obj.event === 'rechargebtn') { // 充值
-                    jsondata = JSON.stringify(currDatas)
-                    var index = layui.layer.open({
-                        area: ['600px', '200px'],
-                        fixed: false, //不固定
-                        maxmin: false,
-                        title : "给当前用户进行充值金额",
-                        skin: 'layui-layer-rim',//加上边框
-                        type : 2,
-                        content : "user_list_add.html",
-                        success : function(layero, index){
-                            var body = layui.layer.getChildFrame('body', index);
-
-
-
-                        },
-                        end : function() {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            $(".layui-laypage-btn")[0].click()
-
-                        }
-                    })
-                    window.sessionStorage.setItem("index",index);
-                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-                    $(window).on("resize",function(){
-                        layui.layer.full(window.sessionStorage.getItem("index"));
-                    })
-
-                }
             });
 
             /* 表格头工具栏点击事件 */

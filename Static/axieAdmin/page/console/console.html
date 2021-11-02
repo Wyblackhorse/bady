@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页--管理后台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../../assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../../assets/module/admin.css?v=318"/>
+    <link rel="stylesheet" href="../../assets/css/public.css" media="all" />
+    <link rel="stylesheet" href="../../assets/libs/layui/css/modules/layui-icon-extend/iconfont.css"/>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
+
+
+</head>
+<body class="childrenBody">
+<blockquote class="layui-elem-quote layui-bg-green">
+    <div id="nowTime"></div>
+</blockquote>
+
+<div class="layui-row layui-col-space10 panel_box">
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg6">
+        <a href="javascript:;">
+            <div class="panel_icon layui-bg-orange">
+                <i class="layui-anim iconfont icon-yonghuguanli8"></i>
+            </div>
+            <div class="panel_word">
+                <span>总瓶子数</span>
+                <cite id="zrxz" style="margin-top: 20px;font-size: 14px" ></cite>
+            </div>
+        </a>
+    </div>
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg6">
+        <a href="javascript:;">
+            <div class="panel_icon layui-bg-cyan">
+                <i class="layui-anim iconfont icon-yonghuguanli8"></i>
+            </div>
+            <div class="panel_word">
+                <span >今日获取总瓶子数</span>
+                <cite id="zrxzlqrs">0</cite>
+            </div>
+        </a>
+    </div>
+
+
+</div>
+
+<!-- js部分 -->
+<script type="text/javascript" src="../../assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../assets/js/common.js?v=318"></script>
+<script src="../../assets/libs/echarts/echarts.min.js"></script>
+<script src="../../assets/libs/echarts/china.js"></script>
+<script src="../../assets/libs/echarts/echarts-wordcloud.min.js"></script>
+
+<script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../assets/js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="../../assets/js/config.url.js"></script>
+
+
+<script>
+
+    var mybck= $.cookie('tokenMyb');
+    //alert(document.cookie);
+    // console.log(mybck)
+    if(mybck == "" || mybck == null){
+
+        window.top.location.href="../../login.html";
+
+    }else{
+        //console.log("进来");
+        // window.location.href="home.html";
+
+        //获取系统时间
+        var newDate = '';
+        getLangDate();
+        //值小于10时，在前面补0
+        function dateFilter(date){
+            if(date < 10){return "0"+date;}
+            return date;
+        }
+        function getLangDate(){
+            var dateObj = new Date(); //表示当前系统时间的Date对象
+            var year = dateObj.getFullYear(); //当前系统时间的完整年份值
+            var month = dateObj.getMonth()+1; //当前系统时间的月份值
+            var date = dateObj.getDate(); //当前系统时间的月份中的日
+            var day = dateObj.getDay(); //当前系统时间中的星期值
+            var weeks = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+            var week = weeks[day]; //根据星期值，从数组中获取对应的星期字符串
+            var hour = dateObj.getHours(); //当前系统时间的小时值
+            var minute = dateObj.getMinutes(); //当前系统时间的分钟值
+            var second = dateObj.getSeconds(); //当前系统时间的秒钟值
+            var timeValue = "" +((hour >= 12) ? (hour >= 18) ? "晚上" : "下午" : "上午" ); //当前时间属于上午、晚上还是下午
+            newDate = dateFilter(year)+"年"+dateFilter(month)+"月"+dateFilter(date)+"日 "+" "+dateFilter(hour)+":"+dateFilter(minute)+":"+dateFilter(second);
+            document.getElementById("nowTime").innerHTML = "亲爱的admin，"+timeValue+"好！ 欢迎使用管理后台。当前时间为： "+newDate+"　"+week;
+            setTimeout("getLangDate()",1000);
+        }
+
+        layui.use(['form','element','layer','jquery'],function(){
+            var form = layui.form,
+                layer = parent.layer === undefined ? layui.layer : top.layer,
+                element = layui.element;
+            $ = layui.jquery;
+
+            //icon动画
+            $(".panel a").hover(function(){
+                $(this).find(".layui-anim").addClass("layui-anim-scaleSpring");
+            },function(){
+                $(this).find(".layui-anim").removeClass("layui-anim-scaleSpring");
+            })
+            $(".panel a").click(function(){
+                parent.addTab($(this));
+            })
+
+
+            // //外部图标
+            // $.get(iconUrl,function(data){
+            //     $(".outIcons span").text(data.split(".icon-").length-1);
+            // })
+
+        })
+
+
+
+        // $.ajax({
+        //     url:js_global_get_total_data_details +"?token="+$.cookie('tokenMyb'),
+        //     type: "get",
+        //     success: function (resultData) {
+        //
+        //         // console.log(resultData.result.slideShows);
+        //
+        //         if(resultData.code == 200){
+        //
+        //
+        //             if(resultData.result.today != "" || resultData.result.today !=null){
+        //
+        //                 //新增人数
+        //                var today_add_peoples_str = resultData.result.today.today_add_peoples;
+        //
+        //                var today_withdrawal_peoples_str = resultData.result.today.today_withdrawal_peoples;
+        //
+        //                var today_withdrawal_money_str = resultData.result.today.today_withdrawal_money;
+        //
+        //                var today_add_fans_peoples_valid_str = resultData.result.today.today_add_fans_peoples_valid;
+        //
+        //                var today_add_fans_peoples_str = resultData.result.today.today_add_fans_peoples;
+        //
+        //                var today_add_group_peopless_str = resultData.result.today.today_add_group_peoples;
+        //
+        //                var today_add_group_peoples__valid_str = resultData.result.today.today_add_group_peoples__valid;
+        //
+        //
+        //
+        //                 if(today_add_peoples_str == null){
+        //                     $('#xz').text(0);
+        //                 }else{
+        //                     $('#xz').text(today_add_peoples_str);
+        //                 }
+        //
+        //                 if(today_withdrawal_peoples_str == null){
+        //                     $('#jrtxrs').text(0);
+        //                 }else{
+        //
+        //                     $('#jrtxrs').text(today_withdrawal_peoples_str);
+        //                 }
+        //
+        //                 if(today_withdrawal_money_str == null){
+        //                     $('#jrtxje').text(0);
+        //                 }else{
+        //                     $('#jrtxje').text(today_withdrawal_money_str);
+        //                 }
+        //
+        //                 if(today_add_fans_peoples_valid_str == null){
+        //                     $('#jrxzsjrs').text(0);
+        //                 }else{
+        //                     $('#jrxzsjrs').text(today_add_fans_peoples_valid_str);
+        //                 }
+        //
+        //                 if(today_add_fans_peoples_str == null){
+        //                     $('#xzfsrs').text(0);
+        //                 }else{
+        //                     $('#xzfsrs').text(today_add_fans_peoples_str);
+        //                 }
+        //
+        //                 if(today_add_group_peoples__valid_str == null){
+        //                     $('#xzlqsjrs').text(0);
+        //                 }else{
+        //                     $('#xzlqsjrs').text(today_add_group_peoples__valid_str);
+        //                 }
+        //
+        //
+        //                 if(today_add_group_peopless_str == null){
+        //                     $('#xzlqrs').text(0);
+        //                 }else{
+        //                     $('#xzlqrs').text(today_add_group_peopless_str);
+        //                 }
+        //
+        //
+        //
+        //                 // $("#xz").tex('html',today_add_peoples_str);
+        //
+        //
+        //
+        //             }else{
+        //
+        //
+        //
+        //                 // $.message({
+        //                 //     message:"服务器没有图片文件,请上传图片" ,
+        //                 //     type: 'error',
+        //                 //     showClose: true
+        //                 // });
+        //
+        //             }
+        //
+        //             if(resultData.result.yesterday_data != "" &&  resultData.result.yesterday_data != "null" && resultData.result.yesterday_data != null){
+        //
+        //
+        //                 console.log("进来");
+        //
+        //                 //新增人数
+        //                 var today_add_peoples_str = resultData.result.yesterday_data.today_add_peoples;
+        //
+        //                 var today_withdrawal_peoples_str = resultData.result.yesterday_data.today_withdrawal_peoples;
+        //
+        //                 var today_withdrawal_money_str = resultData.result.yesterday_data.today_withdrawal_money;
+        //
+        //                 var today_add_fans_peoples_valid_str = resultData.result.yesterday_data.today_add_fans_peoples_valid;
+        //
+        //                 var today_add_fans_peoples_str = resultData.result.yesterday_data.today_add_fans_peoples;
+        //
+        //                 var today_add_group_peopless_str = resultData.result.yesterday_data.today_add_group_peoples;
+        //
+        //                 var today_add_group_peoples__valid_str = resultData.result.yesterday_data.today_add_group_peoples__valid;
+        //
+        //
+        //                 if(today_add_peoples_str == null){
+        //                     $('#zrxz').text(0);
+        //                 }else{
+        //                     $('#zrxz').text(today_add_peoples_str);
+        //                 }
+        //
+        //                 if(today_withdrawal_peoples_str == null){
+        //                     $('#zrjrtxrs').text(0);
+        //                 }else{
+        //
+        //                     $('#zrjrtxrs').text(today_withdrawal_peoples_str);
+        //                 }
+        //
+        //                 if(today_withdrawal_money_str == null){
+        //                     $('#zrjrtxje').text(0);
+        //                 }else{
+        //                     $('#zrjrtxje').text(today_withdrawal_money_str);
+        //                 }
+        //
+        //                 if(today_add_fans_peoples_valid_str == null){
+        //                     $('#zrjrxzsjrs').text(0);
+        //                 }else{
+        //                     $('#zrjrxzsjrs').text(today_add_fans_peoples_valid_str);
+        //                 }
+        //
+        //                 if(today_add_fans_peoples_str == null){
+        //                     $('#zrxzfsrs').text(0);
+        //                 }else{
+        //                     $('#zrxzfsrs').text(today_add_fans_peoples_str);
+        //                 }
+        //
+        //                 if(today_add_group_peoples__valid_str == null){
+        //                     $('#zrxzlqsjrs').text(0);
+        //                 }else{
+        //                     $('#zrxzlqsjrs').text(today_add_group_peoples__valid_str);
+        //                 }
+        //
+        //
+        //                 if(today_add_group_peopless_str == null){
+        //                     $('#zrxzlqrs').text(0);
+        //                 }else{
+        //                     $('#zrxzlqrs').text(today_add_group_peopless_str);
+        //                 }
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //                 // $("#xz").tex('html',today_add_peoples_str);
+        //
+        //
+        //
+        //             }else{
+        //
+        //
+        //
+        //                 // $.message({
+        //                 //     message:"服务器没有图片文件,请上传图片" ,
+        //                 //     type: 'error',
+        //                 //     showClose: true
+        //                 // });
+        //
+        //             }
+        //
+        //
+        //
+        //
+        //         }else{
+        //
+        //             // $.message({
+        //             //     message:resultData.msg ,
+        //             //     type: 'error',
+        //             //     showClose: true
+        //             // });
+        //
+        //         }
+        //
+        //     },
+        //
+        //
+        // });
+
+
+
+    }
+
+
+</script>
+
+</body>
+</html>

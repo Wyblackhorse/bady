@@ -29,7 +29,8 @@
 		/*	width: 100px !important;*/
 		/*}*/
 
-
+		/*layui 限制下拉框高度*/
+		.layui-unselect dl { max-height:200px; }
 
 	</style>
 </head>
@@ -98,7 +99,7 @@
 
 		var currParentDatas = eval('('+parent.jsondata+')')
 
-		// console.log(currParentDatas)
+		console.log(currParentDatas)
 
 		var curr_gobalSelectReturnID =  parent.gobalSelectReturnID
 		var curr_gobalSelectReturnID_account =  parent.gobalSelectReturnID_account
@@ -164,7 +165,7 @@
 
 					//获取账号列表添加到下拉框中
 					$.ajax({
-						url: global_request_addAccount+"?token="+global_token+"&action=select&limit=3000&page=1&user_id="+curr_gobalSelectReturnID,
+						url: global_request_addAccount+"?token="+global_token+"&action=select&limit=3000&page=1&user_id="+currParentDatas.user_id,
 						dataType: 'json',
 						type: 'GET',
 						// data: param,
@@ -269,13 +270,47 @@
 							// layer.msg(addResult.msg);
 							notice.msg(addResult.msg, {icon: 1});
 
+							//主动调用总价接口
+							$.ajax({
+								url: global_request_changePrice,
+								type: "GET",
+								dataType: "json",
+								success: function (addResult) {
 
-							setTimeout(function () {
-								var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-								parent.layer.close(index);
-								// window.parent.location.reload();
+									if (addResult.code === 200) {
+										// layer.msg(addResult.msg);
+										// notice.msg(addResult.msg, {icon: 1});
 
-							}, 1300)
+										var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+										parent.layer.close(index);
+
+									} else {
+
+										// layer.msg(addResult.msg);
+										notice.msg(addResult.msg, {icon: 2});
+										// setTimeout(function () {
+										// 	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+										// 	parent.layer.close(index);
+										// 	// window.parent.location.reload();
+										// }, 1300)
+
+									}
+
+
+								},
+
+
+							});
+
+							// setTimeout(function () {
+							// 	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+							// 	parent.layer.close(index);
+							// 	// window.parent.location.reload();
+							//
+							// }, 1300)
+
+
+
 
 
 						} else {
@@ -342,12 +377,18 @@
 						// $('#accout_id').append(new Option("全部", "8888888"));// 下拉菜单里添加元素
 						$.each(returnDataArray, function (index, item) {
 							$('#accout_id').append(new Option(item.remark, item.id));// 下拉菜单里添加元素
+
 						});
+
+
 
 						//重新渲染 固定写法
 						form.render("select");
 
 						layui.layer.close(loadIndex)
+
+
+
 
 					}
 				})
