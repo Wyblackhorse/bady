@@ -25,12 +25,13 @@ class AccountNumberController extends AdminBase
         $action = $this->request()->getQueryParam('action');
         $power_up = $this->request()->getQueryParam('power_up');
 
-//        if (!$this->check_parameter($address, "address") || !$this->check_parameter($mail, "mail") || !$this->check_parameter($remark, "remark")
-//            || !$this->check_parameter($user_id, "user_id") || !$this->check_parameter($action, "action")) {
-//            return false;
-//        }
+        $operator = $this->request()->getQueryParam('operator');
+        $axie_content = $this->request()->getQueryParam('axie_content');
+        $all_price = $this->request()->getQueryParam('all_price');
+
+
         try {
-            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id, $power_up) {
+            DbManager::getInstance()->invoke(function ($client) use ($address, $mail, $remark, $action, $user_id, $power_up, $operator, $axie_content, $all_price) {
                 if ($action == "add") {
                     #添加
                     $one = UserModel::invoke($client)->get(['id' => $user_id]);
@@ -58,7 +59,10 @@ class AccountNumberController extends AdminBase
                         'user_id' => $user_id,
                         'remark' => $remark,
                         'status' => 1,
-                        'power_up' => $power_up
+                        'power_up' => $power_up,
+                        'operator' => $operator,
+                        'axie_content' => $axie_content,
+                        'all_price' => $all_price
                     ];
                     $two = AccountNumberModel::invoke($client)->data($add)->save();
                     if (!$two) {
@@ -129,7 +133,10 @@ class AccountNumberController extends AdminBase
                         'mail' => $mail,
                         'user_id' => $user_id,
                         'remark' => $remark,
-                        'power_up' => $power_up
+                        'power_up' => $power_up,
+                        'operator' => $operator,
+                        'axie_content' => $axie_content,
+                        'all_price' => $all_price
                     ];
                     $one = AccountNumberModel::invoke($client)->where(['id' => $id])->update($add);
                     if (!$one) {
@@ -147,5 +154,6 @@ class AccountNumberController extends AdminBase
         }
 
     }
+
 
 }

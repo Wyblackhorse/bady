@@ -92,12 +92,12 @@ class StatisticsController extends UserBase
                     $win_rate = $today_victory / ($today_victory + $today_fail);
                     #查看 昨天是否存在数据
                     $two = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp - 86400)]);
-
-
                     if ($two) {
                         # 存在  昨天的数据需要更新    用更新的瓶子数-昨日的瓶子数
+
                         $compare = $today_bottle - $two['today_bottle'];
                         $subsection_yes = $subsection - $two['subsection'];
+                        var_dump($compare);
                     } else {
                         $compare = $today_bottle;
                         $subsection_yes = $subsection;
@@ -165,6 +165,8 @@ class StatisticsController extends UserBase
                     }
 
 
+
+
                     $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 3, "user_id" => $this->who['id']]);
                     if (!$zz) {
                         $add['kinds'] = 3;
@@ -172,7 +174,7 @@ class StatisticsController extends UserBase
                         $add['user_id'] = $this->who['id'];
                         $res = StatisticsModel::invoke($client)->data($add)->save();
                     } else {
-                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 2]);
+                        $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 3, "user_id" => $this->who['id']]);
                         if ($ll) {
                             $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
                         } else {
@@ -191,6 +193,9 @@ class StatisticsController extends UserBase
                         );
                     }
 
+
+
+
                     #查看 明天是否存在
                     $three = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp + 86400)]);
                     if ($three) {
@@ -198,6 +203,7 @@ class StatisticsController extends UserBase
                         StatisticsModel::invoke($client)->where(['id' => $three['id']])->update([
                             'compare' => $compare
                         ]);
+
                         #修改明天的是 个人总统计
                         $one = StatisticsModel::invoke($client)->get(['kinds' => 3, "date" => Date("Y-m-d", $ppp + 86400), 'user_id' => $this->who['id']]);
                         if ($one) {
@@ -207,6 +213,9 @@ class StatisticsController extends UserBase
                                 StatisticsModel::invoke($client)->where(['id' => $one['id']])->update(['compare' => $compare]);
                             }
                         }
+
+
+
                         #修改 明天的 总统计
                         $one = StatisticsModel::invoke($client)->get(['kinds' => 2, "date" => Date("Y-m-d", $ppp + 86400)]);
                         if ($one) {

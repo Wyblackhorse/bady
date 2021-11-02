@@ -6,13 +6,18 @@ namespace App\HttpController\Admin;
 
 use App\Model\AccountNumberModel;
 use App\Model\BabyInformationModel;
+
 use App\Model\StatisticsModel;
 use App\Model\UserModel;
+use App\Task\GetTodayTask;
+use Cassandra\Date;
 use EasySwoole\DDL\Filter\FilterUnsigned;
+use EasySwoole\HttpClient\Exception\InvalidUrl;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\ORM\Exception\Exception;
 use EasySwoole\Pool\Exception\PoolEmpty;
+use PHPUnit\Framework\Constraint\IsFalse;
 
 class StatisticsController extends AdminBase
 {
@@ -45,11 +50,20 @@ class StatisticsController extends AdminBase
                     $res = AccountNumberModel::invoke($client)->get(['id' => $item['account_number_id']]);
                     if ($res) {
                         $list[$k]['name'] = $res['remark'];
+                        $list[$k]['price'] = $res['price'];
                     }
                     $re = UserModel::invoke($client)->get(['id' => $item['user_id']]);
                     if ($re) {
                         $list[$k]['user_name'] = $re['remark'];
                     }
+
+
+                    $res = BabyInformationModel::invoke($client)->get(['account_number_id' => $item['account_number_id']]);
+                    if ($res) {
+                        $list[$k]['remark'] = $res['remark'];
+
+                    }
+
                 }
 
 
@@ -97,7 +111,6 @@ class StatisticsController extends AdminBase
 
         try {
 
-
             DbManager::getInstance()->invoke(function ($client) {
                 $account_number_id = $this->request()->getQueryParam('account_number_id');
                 $today_victory = $this->request()->getQueryParam('today_victory');
@@ -114,10 +127,12 @@ class StatisticsController extends AdminBase
                     return false;
                 }
                 $win_rate = $today_victory / ($today_victory + $today_fail);
+
+                # 获取昨天的
                 $two = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp - 86400)]);
                 if ($two) {
                     $compare = $today_bottle - $two['today_bottle'];
-                    $subsection_yes = $subsection - $two['subsection'];
+                    $subsection_yes = $two['subsection'];
                 } else {
                     $compare = $today_bottle;
                     $subsection_yes = $subsection;
@@ -155,13 +170,17 @@ class StatisticsController extends AdminBase
                     }
                     $this->writeJson(200, [], "添加成功");
                 }
+
+
                 #查询kinds =2 是否存在
                 $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 2]);
                 if (!$zz) {
+
                     $add['kinds'] = 2;
                     $add['account_number_id'] = 0;
                     $res = StatisticsModel::invoke($client)->data($add)->save();
                 } else {
+
                     $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 2]);
                     if ($ll) {
                         $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
@@ -182,14 +201,18 @@ class StatisticsController extends AdminBase
                     );
                 }
 
+
                 $zz = StatisticsModel::invoke($client)->get(['date' => $date, 'kinds' => 3, "user_id" => $user_id]);
                 if (!$zz) {
+                    var_dump("kinds=3 不存在");
                     $add['kinds'] = 3;
                     $add['account_number_id'] = 0;
                     $add['user_id'] = $user_id;
+                    $add['compare'] = $today_bottle;
                     $res = StatisticsModel::invoke($client)->data($add)->save();
                 } else {
-                    $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 2]);
+                    var_dump("kinds=3 存在");
+                    $ll = StatisticsModel::invoke($client)->get(['date' => Date("Y-m-d", $ppp - 86400), 'kinds' => 3, "user_id" => $user_id]);
                     if ($ll) {
                         $compare = $zz['today_bottle'] + $add['today_bottle'] - $ll['today_bottle'];
                     } else {
@@ -212,7 +235,6 @@ class StatisticsController extends AdminBase
                 $three = StatisticsModel::invoke($client)->get(['account_number_id' => $account_number_id, 'date' => Date("Y-m-d", $ppp + 86400)]);
                 if ($three) {
                     $compare = $three['today_bottle'] - $add['today_bottle']; #修改明天的数据
-                    var_dump($compare);
                     StatisticsModel::invoke($client)->where(['id' => $three['id']])->update([
                         'compare' => $compare
                     ]);
@@ -267,19 +289,22 @@ class StatisticsController extends AdminBase
                     $date = $one['date'];
                     $ppp = strtotime(date($date));
                     $user_id = $one['user_id'];
-
                     if ($one) {
                         #删除成功
                         #个人总统计 重新计算
                         #对今日的 先重新计算
                         StatisticsModel::invoke($client)->destroy(['id' => $id]);
 
+                        #
+                        StatisticsModel::invoke($client)->where(['kinds' => 1, "user_id" => $user_id, "date" => Date("Y-m-d", $ppp + 86400), 'account_number_id' => $one['account_number_id']])->update([
+                            'compare' => QueryBuilder::inc($one['today_bottle'])
+                        ]);
+
                         # 今天的总统计 减少 QueryBuilder::dec($one['today_bottle'])
                         StatisticsModel::invoke($client)->where(['kinds' => 3, "user_id" => $user_id, "date" => $date])->update([
                             'today_bottle' => QueryBuilder::dec($one['today_bottle']),
                             'compare' => QueryBuilder::dec($one['today_bottle'])
                         ]);
-
                         #对明天总统计
                         $two = StatisticsModel::invoke($client)
                             ->where(['kinds' => 3, "user_id" => $user_id, "date" => Date("Y-m-d", $ppp + 86400)])
@@ -298,6 +323,15 @@ class StatisticsController extends AdminBase
 
                     }
 
+                    $this->writeJson(200, [], "删除成功");
+
+                }
+
+
+                if ($action == "update") {
+
+
+                    $this->writeJson(200, [], "修改成功");
                 }
 
 
@@ -305,6 +339,35 @@ class StatisticsController extends AdminBase
         } catch (\Throwable $e) {
             $this->writeJson(-1, [], "异常:" . $e->getMessage());
         }
+    }
+
+
+    function GetTodayStatistics()
+    {
+
+
+        try {
+
+            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+
+
+//            $task->async(new GetTodayTask());
+
+
+
+
+
+
+
+
+
+            $this->writeJson(200, [], "调用成功");
+
+        } catch (\Throwable $e) {
+            $this->writeJson(-1, [], "异常:" . $e->getMessage());
+            return false;
+        }
+
     }
 
 

@@ -16,6 +16,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/easyswoole" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/http" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/http-annotation" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/http-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/log" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/mysqli" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/easyswoole/orm" />

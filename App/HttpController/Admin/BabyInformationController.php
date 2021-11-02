@@ -8,6 +8,7 @@ use App\Model\AccountNumberModel;
 use App\Model\BabyInformationModel;
 use App\Model\UserModel;
 use EasySwoole\ORM\DbManager;
+use EasySwoole\ORM\Exception\Exception;
 
 class BabyInformationController extends UserController
 {
@@ -77,6 +78,7 @@ class BabyInformationController extends UserController
                         if ($res) {
                             $list[$k]['name'] = $res['mail'];
                             $list[$k]['phone'] = $res['remark'];
+                            $list[$k]['prices'] = $res['price'];
                         }
                     }
 
@@ -136,4 +138,23 @@ class BabyInformationController extends UserController
 
     }
 
+
+    function changePrice()
+    {
+        try {
+            $res = AccountNumberModel::create()->all();
+            if ($res) {
+                foreach ($res as $re) {
+                    $price = BabyInformationModel::create()->where(['account_number_id' => $re['id']])->sum("price");
+                    AccountNumberModel::create()->where(['id' => $re['id']])->update(['price' => $price]);
+                }
+
+
+            }
+            $this->writeJson(200, [], "执行成功");
+
+        } catch (\Throwable $e) {
+            $this->writeJson(-1, [], "异常:" . $e->getMessage());
+        }
+    }
 }

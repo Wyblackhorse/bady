@@ -22,9 +22,6 @@ class AccountNumberController extends UserBase
         $mail = $this->request()->getQueryParam('mail');
         $remark = $this->request()->getQueryParam('remark');
         $user_id = $this->who['id'];
-
-
-
         $action = $this->request()->getQueryParam('action');
         $power_up = $this->request()->getQueryParam('power_up');
 

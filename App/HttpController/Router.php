@@ -37,6 +37,8 @@ class Router extends AbstractRouter
 
         #addBaby
         $routeCollector->get('/admin/addBaby', '/Admin/BabyInformationController/addBaby');
+        #changePrice
+        $routeCollector->get('/admin/changePrice', '/Admin/BabyInformationController/changePrice');
 
 
         /**
@@ -45,9 +47,11 @@ class Router extends AbstractRouter
 
         $routeCollector->get('/admin/get_statistics', '/Admin/StatisticsController/get_statistics');
         #addStatistics
-        $routeCollector->get('/admin/addStatistics', '/Admin/StatisticsController/addStatistics');
+       // $routeCollector->get('/admin/addStatistics', '/Admin/StatisticsController/addStatistics');
         #updateStatistics
         $routeCollector->get('/admin/updateStatistics', '/Admin/StatisticsController/updateStatistics');
+        #GetTodayStatistics
+       # $routeCollector->get('/admin/GetTodayStatistics', '/Admin/StatisticsController/GetTodayStatistics');
 
 
         /**
@@ -60,6 +64,8 @@ class Router extends AbstractRouter
         #memberInformation
         $routeCollector->get('/user/addAccount', '/User/AccountNumberController/addAccount');
         $routeCollector->get('/user/addBaby', '/User/BabyInformationController/addBaby');
+        $routeCollector->get('/user/changePrice', '/User/BabyInformationController/changePrice');
+
         $routeCollector->get('/user/get_statistics', '/User/StatisticsController/get_statistics');
 
 
